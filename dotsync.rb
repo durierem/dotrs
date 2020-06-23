@@ -1,17 +1,23 @@
 #!/usr/bin/env ruby
 
+# TODO:
+# => Backup the original dotfiles before overwriting them
+# => Implement the pull/apply/save commands
+# => Implement the versbose option
+
 require 'optparse'
 
-VERSION = "0.9.0"
+VERSION = "0.0.1"
 LOCAL_REPO_NAME = ".dotfiles"
 LOCAL_REPO_PATH = File.join(Dir.home, LOCAL_REPO_NAME)
 
-# === OPTION PARSING ===========================================================
+# ----- OPTION PARSING -----
 
 options = {}
 OptionParser.new do |opts|
-  opts.banner = "Usage: dotsync [OPTION] FILE...\n   or: dotsync [OPTION]...\n"\
-    "   or: dotsync --init GITHUB-REPOSITORY\n"                                \
+  opts.banner = "Usage: dotsync [OPTION] FILE...\n" \
+    "   or: dotsync [OPTION]...\n" \
+    "   or: dotsync --init GITHUB-REPOSITORY\n" \
     "Manage your dotfiles with a GitHub repository.\n\n"
   opts.on("-i", "--init", "Clone the remote GITHUB-REPOSITORY and exit") do
     options[:init] = ARGV
@@ -32,7 +38,7 @@ OptionParser.new do |opts|
           "to their respective location") do
     options[:apply] = nil
   end
-  opts.on("-s", "--save", "Copy all tracked files from their respective "      \
+  opts.on("-s", "--save", "Copy all tracked files from their respective " \
           "location to the local repository") do
     options[:save] = nil
   end
@@ -44,7 +50,7 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-# === MAIN PROGRAM =============================================================
+# ----- MAIN PROGRAM -----
 
 # Display version number if asked
 if options.include?(:version)
@@ -59,7 +65,7 @@ if !Dir.exist?(LOCAL_REPO_PATH) && !options.include?(:init)
   exit
 end
 
-# --- option: -i, --init -------------------------------------------------------
+# option: -i, --init
 if options.include?(:init)
   if Dir.exist?(LOCAL_REPO_PATH)
     puts "*** ERROR: #{LOCAL_REPO_PATH} already exists."
@@ -73,7 +79,7 @@ if options.include?(:init)
   exit
 end
 
-# --- option: -a, --add --------------------------------------------------------
+# option: -a, --add
 if options.include?(:add)
   if options[:add].empty?
     puts "No file given, see --help for further details"
@@ -83,7 +89,7 @@ if options.include?(:add)
   system("cp -v --parent #{options[:add].join(" ")} #{LOCAL_REPO_PATH}")
 end
 
-# --- option: -r, --remove -----------------------------------------------------
+# option: -r, --remove
 if options.include?(:remove)
   if options[:remove].empty?
     puts "No file given, see --help for further details"
@@ -95,9 +101,9 @@ if options.include?(:remove)
   end
 end
 
+# option: -p, --push
 if options.include?(:push)
   system("git -C #{LOCAL_REPO_PATH} add --all")
   system("git -C #{LOCAL_REPO_PATH} commit -m 'dotsync'")
   system("git -C #{LOCAL_REPO_PATH} push")
 end
-
