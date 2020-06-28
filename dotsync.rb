@@ -14,7 +14,7 @@ LOCAL_REPO_PATH = File.join(Dir.home, LOCAL_REPO_NAME)
 # ----- OPTION PARSING -----
 
 options = {}
-OptionParser.new do |opts|
+optparse = OptionParser.new do |opts|
   opts.banner = "Usage: dotsync [OPTION] FILE...\n" \
     "   or: dotsync [OPTION]...\n" \
     "   or: dotsync --init GITHUB-REPOSITORY\n" \
@@ -48,7 +48,14 @@ OptionParser.new do |opts|
   opts.on("--version", "Display version number and exit") do
     options[:version] = nil
   end
-end.parse!
+end
+
+begin
+  optparse.parse!
+rescue OptionParser::InvalidOption
+  puts("Invalid option #{options}, see `--help` for a list of supported options.")
+  exit
+end
 
 # ----- MAIN PROGRAM -----
 
@@ -72,7 +79,7 @@ if options.include?(:init)
     exit
   end
   if ARGV.length == 0
-    puts "*** ERROR: No argument given, see --help for further details"
+    puts "No argument given, see `--help` for further details"
     exit
   end
   system("git -C #{Dir.home} clone #{ARGV[0]} #{LOCAL_REPO_NAME}")
@@ -82,7 +89,7 @@ end
 # option: -a, --add
 if options.include?(:add)
   if options[:add].empty?
-    puts "No file given, see --help for further details"
+    puts "No file given, see `--help` for further details"
     exit
   end
   options[:add].map! { |file| file = File.absolute_path(file) }
@@ -92,7 +99,7 @@ end
 # option: -r, --remove
 if options.include?(:remove)
   if options[:remove].empty?
-    puts "No file given, see --help for further details"
+    puts "No file given, see `--help` for further details"
     exit
   end
   options[:remove].map do |file|
@@ -107,3 +114,4 @@ if options.include?(:push)
   system("git -C #{LOCAL_REPO_PATH} commit -m 'dotsync'")
   system("git -C #{LOCAL_REPO_PATH} push")
 end
+
