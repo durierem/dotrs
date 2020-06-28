@@ -2,10 +2,14 @@
 
 # TODO:
 # => Backup the original dotfiles before overwriting them
-# => Implement the pull/apply/save commands
-# => Implement the versbose option
+# => Implement the save commands
+# => Implement the verbose option
+# => Use FileUtils instead of calls to system
+# => Find proper names and refactor this messy code!
+# => Test things and handle many potential errors
 
 require 'optparse'
+require 'fileutils'
 
 VERSION = "0.0.1"
 LOCAL_REPO_NAME = ".dotfiles"
@@ -54,7 +58,7 @@ end
 begin
   optparse.parse!
 rescue OptionParser::InvalidOption
-  puts("Invalid option #{options}, see `--help` for a list of supported options.")
+  puts("Invalid option #{options}, see `--help` for supported options.")
   exit
 end
 
@@ -83,7 +87,7 @@ if options.include?(:init)
     puts "No argument given, see `--help` for further details"
     exit
   end
-  system("git -C #{Dir.home} clone #{ARGV[0]} #{LOCAL_REPO_NAME}")
+  system(" git -C #{Dir.home} clone #{ARGV[0]} #{LOCAL_REPO_NAME}")
   exit
 end
 
@@ -122,5 +126,30 @@ if options.include?(:push)
   system("git -C #{LOCAL_REPO_PATH} add --all")
   system("git -C #{LOCAL_REPO_PATH} commit -m 'dotsync'")
   system("git -C #{LOCAL_REPO_PATH} push")
+end
+
+# option -P, --pull
+if options.include?(:pull)
+  system("git -C #{LOCAL_REPO_PATH} pull")
+end
+
+def for_each_file_recursively(dir, &block)
+  Dir.glob("#{dir}/**/*", File::FNM_DOTMATCH).each do |file|
+    unless File.directory?(file) || File.absolute_path(file).include?(".git")
+      yield file
+    end
+  end
+end
+
+def get_original_path(file)
+  File.expand_path(file).delete_prefix(LOCAL_REPO_PATH)
+end
+
+# option: -A, --apply
+if options.include?(:apply)
+  curr_file = nil
+  for_each_file_recursively(LOCAL_REPO_PATH) do |file| 
+    FileUtils.cp(file, get_original_path(file), verbose: true) 
+  end
 end
 
