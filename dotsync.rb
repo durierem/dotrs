@@ -50,6 +50,7 @@ optparse = OptionParser.new do |opts|
   end
 end
 
+# Check for invalid options
 begin
   optparse.parse!
 rescue OptionParser::InvalidOption
@@ -75,7 +76,7 @@ end
 # option: -i, --init
 if options.include?(:init)
   if Dir.exist?(LOCAL_REPO_PATH)
-    puts "*** ERROR: #{LOCAL_REPO_PATH} already exists."
+    puts "#{LOCAL_REPO_PATH} already exists."
     exit
   end
   if ARGV.length == 0
@@ -93,7 +94,11 @@ if options.include?(:add)
     exit
   end
   options[:add].map! { |file| file = File.absolute_path(file) }
-  system("cp -v --parent #{options[:add].join(" ")} #{LOCAL_REPO_PATH}")
+  if options.include?(:verbose)
+    system("cp -v --parent #{options[:add].join(" ")} #{LOCAL_REPO_PATH}")
+  else
+    system("cp --parent #{options[:add].join(" ")} #{LOCAL_REPO_PATH}")
+  end
 end
 
 # option: -r, --remove
@@ -104,7 +109,11 @@ if options.include?(:remove)
   end
   options[:remove].map do |file|
     file = File.absolute_path(file)
-    system("rm -v #{File.join(LOCAL_REPO_PATH, file)}")
+    if options.include?(:verbose)
+      system("rm -v #{File.join(LOCAL_REPO_PATH, file)}")
+    else
+      system("rm #{File.join(LOCAL_REPO_PATH, file)}")
+    end
   end
 end
 
