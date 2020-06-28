@@ -5,15 +5,16 @@
 # => Implement the save commands
 # => Implement the verbose option
 # => Use FileUtils instead of calls to system
+# => Use Git or Rugged (gems) to handle git operations
 # => Find proper names and refactor this messy code!
-# => Test things and handle many potential errors
+# => Prevent incompatible options to be
 
 require 'optparse'
 require 'fileutils'
 
 VERSION = "0.0.1"
-LOCAL_REPO_NAME = ".dotfiles"
-LOCAL_REPO_PATH = File.join(Dir.home, LOCAL_REPO_NAME)
+LOCAL_REPO = ".dotfiles"
+LOCAL_REPO_PATH = File.join(Dir.home, LOCAL_REPO)
 
 # ----- OPTION PARSING -----
 
@@ -21,9 +22,9 @@ options = {}
 optparse = OptionParser.new do |opts|
   opts.banner = "Usage: dotsync [OPTION] FILE...\n" \
     "   or: dotsync [OPTION]...\n" \
-    "   or: dotsync --init GITHUB-REPOSITORY\n" \
+    "   or: dotsync --init REMOTE-REPOSITORY\n" \
     "Manage your dotfiles with a GitHub repository.\n\n"
-  opts.on("-i", "--init", "Clone the remote GITHUB-REPOSITORY and exit") do
+  opts.on("-i", "--init", "Clone REMOTE-REPOSITORY and exit") do
     options[:init] = ARGV
   end
   opts.on("-a", "--add", "Add FILE to the tracked files") do
@@ -72,8 +73,8 @@ end
 
 # Check for existing local repository
 if !Dir.exist?(LOCAL_REPO_PATH) && !options.include?(:init)
-  puts "No local repository found, please initialize one with:\n\n"            \
-       "  dotsync --init GITHUB-REPOSITORY"
+  puts "No local repository found, please initialize one with:\n\n" \
+       "  dotsync --init REMOTE-REPOSITORY"
   exit
 end
 
@@ -87,7 +88,7 @@ if options.include?(:init)
     puts "No argument given, see `--help` for further details"
     exit
   end
-  system(" git -C #{Dir.home} clone #{ARGV[0]} #{LOCAL_REPO_NAME}")
+  system(" git -C #{Dir.home} clone #{ARGV[0]} #{LOCAL_REPO}")
   exit
 end
 
@@ -121,6 +122,33 @@ if options.include?(:remove)
   end
 end
 
+# option: -s, --save
+if options.include?(:save)
+  for_each_file_recursively(LOCAL_REPO_PATH) do |file| 
+    FileUtils.cp(get_original_path(file), file, verbose: true) 
+  end
+end
+
+# for_each_file_rec
+def for_each_file_rec(dir, &block)
+  Dir.glob("#{dir}/**/*", File::FNM_DOTMATCH).each do |file|
+    yield file
+  end
+end
+
+def original_path(file)
+  File.expand_path(file).delete_prefix(LOCAL_REPO_PATH)
+end
+
+# option: -A, --apply
+if options.include?(:apply)
+  for_each_dotfile(LOCAL_REPO_PATH) do |file| 
+    unless File.directory?(file) || File.absolute_path(file).include?(".git")
+      FileUtils.cp(file, get_original_path(file), verbose: true) 
+    end
+  end
+end
+
 # option: -p, --push
 if options.include?(:push)
   system("git -C #{LOCAL_REPO_PATH} add --all")
@@ -131,25 +159,5 @@ end
 # option -P, --pull
 if options.include?(:pull)
   system("git -C #{LOCAL_REPO_PATH} pull")
-end
-
-def for_each_file_recursively(dir, &block)
-  Dir.glob("#{dir}/**/*", File::FNM_DOTMATCH).each do |file|
-    unless File.directory?(file) || File.absolute_path(file).include?(".git")
-      yield file
-    end
-  end
-end
-
-def get_original_path(file)
-  File.expand_path(file).delete_prefix(LOCAL_REPO_PATH)
-end
-
-# option: -A, --apply
-if options.include?(:apply)
-  curr_file = nil
-  for_each_file_recursively(LOCAL_REPO_PATH) do |file| 
-    FileUtils.cp(file, get_original_path(file), verbose: true) 
-  end
 end
 
