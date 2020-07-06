@@ -4,9 +4,12 @@
 
 ## What does dotrs do?
 
-dotrs uses a hidden git repository, placed in your `$HOME` folder to store a copy of the dotfiles you want to keep synchronized.
+dotrs uses a hidden git repository, placed in your `$HOME` folder to store a
+copy of the dotfiles you want to keep synchronized.
 
-The goal here is to provide a way of managing your dotfiles with a git hosting service such as GitHub without the mess created by other common solutions (`$HOME` folder as a git repository or use of soft links to the actual files).
+The goal here is to provide a way of managing your dotfiles with a git hosting
+service such as GitHub without the mess created by other common solutions
+(`$HOME` folder as a git repository or use of soft links to the actual files).
 
 ## Installation
 
@@ -20,21 +23,36 @@ To install dotrs locally in `$HOME/.local/bin/` (without root access) :
 
 ## Setup
 
-dotrs needs a remote repository for managing your dotfiles. Create an empty one on GitHub (or other) if you don't already have one. Use the following command to initialize dotrs :
+dotrs needs a remote repository for managing your dotfiles. Create an empty one
+on GitHub (or other) if you don't already have one. Use the following command to
+initialize dotrs :
 
-`dotrs init REMOTE-URL`
+`$ dotrs --init REMOTE-URL`
 
 ## Usage
 
-`dotrs add [OPTION]... FILE...`
-`dotrs remove [OPTION]... FILE...`
-`dotrs save [OPTION]... [--copy-only | --push-only]`
-`dotrs apply [OPTION]... [--pull-only | --copy-only]`
+### Adding files and saving changes
 
-Use the `add`/`remove` commands to add/remove files from the local repository. This will cause dotrs to keep/lose track of a specific file.
+Add a file to the local repository with `--add` (`-a`). This will cause dotrs
+to keep track of the file:
 
-Use the `save` command to copy all tracked files to the local repository and push it to the remote one. You can use the `--copy-only` or `--push-only` options to perform either one of these actions individually.
+`$ dotrs --add ~/.bashrc`
 
-Use the `apply` command to pull the latest changes from the remote repository and replace all your currently tracked dotfiles by the new ones. Similarly to the `save` command, you can also use `--pull-only` or `--copy-only`.
+Similarly, use `--remove` (`-r`) to stop dotrs from tracking a file.
 
-All these commands can be flagged with `-v` or `--verbose` to print out what is being done.
+Once files have been added or modified, save the changes with:
+
+`$ dotrs --save`
+
+It will copy all the tracked files to the local repository and push to remote.
+
+### Retrieving all files
+
+To pull the latest changes from the remote repository and replace all your
+currently tracked files, simply use:
+
+`$ dotrs --apply`
+
+### Checking for tracked files
+
+Use `--list` (`-l`) to view all currently tracked files.
