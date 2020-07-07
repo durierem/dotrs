@@ -10,7 +10,7 @@
 require 'optparse'
 require_relative 'actions.rb'
 
-VERSION = '1.0.0'
+VERSION = '1.0.1'
 
 # Set up the options
 options = {}
