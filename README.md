@@ -1,4 +1,4 @@
-# [![Image](https://img.tedomum.net/data/thumb/dotrs_logo_144-6252ff.png)](https://img.tedomum.net/data/dotrs_logo_144-6252ff.png) dotrs
+# ![Image](https://img.tedomum.net/data/dotrs_logo_32-b1fd1b.png) dotrs
 
 *Straightforward dotfiles management*
 
