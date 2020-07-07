@@ -15,7 +15,7 @@ VERSION = '1.0.1'
 # Set up the options
 options = {}
 optparse = OptionParser.new do |opts|
-  opts.banner = "Straightforward dofiles management\n"                         \
+  opts.banner = "Straightforward dofiles management\n\n"                       \
                 "Usage: dotrs [-v] OPTION\n\n"                                 \
                 "Options:\n"
 

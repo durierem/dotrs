@@ -13,13 +13,13 @@ service such as GitHub without the mess created by other common solutions
 
 ## Installation
 
-To install dotrs system-wide in `/usr/bin/` :
+To install dotrs system-wide:
 
-`sudo sh install.sh`
+`$ sudo sh install.sh`
 
-To install dotrs locally in `$HOME/.local/bin/` (without root access) :
+To install dotrs locally (without root access):
 
-`sh install.sh --local`
+`$ sh install.sh --local`
 
 ## Setup
 
@@ -33,12 +33,12 @@ initialize dotrs :
 
 ### Adding files and saving changes
 
-Add a file to the local repository with `--add` (`-a`). This will cause dotrs
-to keep track of the file:
+Add a file to the local repository with `--add`. This will cause dotrs to keep
+track of the file:
 
 `$ dotrs --add ~/.bashrc`
 
-Similarly, use `--remove` (`-r`) to stop dotrs from tracking a file.
+Similarly, use `--remove` to stop dotrs from tracking a file.
 
 Once files have been added or modified, save the changes with:
 
@@ -46,7 +46,7 @@ Once files have been added or modified, save the changes with:
 
 It will copy all the tracked files to the local repository and push to remote.
 
-### Retrieving all files
+### Retrieving files and applying
 
 To pull the latest changes from the remote repository and replace all your
 currently tracked files, simply use:
@@ -55,4 +55,4 @@ currently tracked files, simply use:
 
 ### Checking for tracked files
 
-Use `--list` (`-l`) to view all currently tracked files.
+Use `--list` to view all currently tracked files.
