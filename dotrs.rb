@@ -2,10 +2,11 @@
 # frozen_string_literal: true
 
 ## TODO:
-# => Backup the original dotfiles before overwriting them
-# => Use Git or Rugged (gems) to handle git operations
-# => Use the name of the user repo instead of forcing '.dotfiles'
-# => Create missing directories when applying
+#  1. Use Git or Rugged (gems) to handle git operations
+#  2. Use commands instead of options: 'dotrs add' instead of 'dotrs --add'
+#  3. Add options to pull/push/copy only (requires 2)
+#  4. Use the name of the user repo instead of forcing '.dotfiles'?
+#  5. Backup the original dotfiles before overwriting them?
 
 require 'optparse'
 require_relative 'actions.rb'
