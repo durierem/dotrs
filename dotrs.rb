@@ -68,21 +68,16 @@ end
 # TODO: code properly
 if options.include?(:init)
   Actions.init(options[:init])
-  exit # Prevent other actions to be done
 elsif options.include?(:add)
   Actions.add(options[:add], verbose: options[:verbose])
-  exit
 elsif options.include?(:remove)
   Actions.remove(options[:remove], verbose: options[:verbose])
-  exit
 elsif options.include?(:save)
   Actions.save(verbose: options[:verbose])
   Actions.push
-  exit
 elsif options.include?(:apply)
   Actions.pull
   Actions.apply(verbose: options[:verbose])
-  exit
 elsif options.include?(:list)
   Actions.list_tracked
 end
