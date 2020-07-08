@@ -15,11 +15,11 @@ service such as GitHub without the mess created by other common solutions
 
 To install dotrs system-wide:
 
-`$ sudo sh install.sh`
+`$ sudo bash install.sh`
 
 To install dotrs locally (without root access):
 
-`$ sh install.sh --local`
+`$ bash install.sh --local`
 
 ## Setup
 
