@@ -12,7 +12,7 @@ module Actions
   def init(remote)
     if Dir.exist?(Config::LOCAL_REPO_PATH)
       puts "#{Config::LOCAL_REPO_PATH} already exists."
-      exit
+      exit(1)
     end
     system("git -C #{Dir.home} clone #{remote} #{Config::LOCAL_REPO}")
   end
@@ -28,7 +28,7 @@ module Actions
         FileUtils.cp(file, parent_directory, verbose: verbose)
       rescue StandardError
         puts("Unable to add #{Tools.original_path(file)} to tracked files")
-        exit
+        exit(1)
       end
     end
   end
@@ -41,7 +41,7 @@ module Actions
         FileUtils.rm(File.join(Config::LOCAL_REPO_PATH, file), verbose: verbose)
       rescue StandardError
         puts("Unable to remove #{Tools.original_path(file)} from tracked files")
-        exit
+        exit(1)
       end
       ## TODO: remove the reminiscnent directory if it is empty
     end

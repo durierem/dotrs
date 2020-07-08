@@ -10,8 +10,9 @@
 
 require 'optparse'
 require_relative 'src/actions.rb'
+require_relative 'src/config'
 
-VERSION = '1.0.1'
+VERSION = '1.0.2'
 
 # Set up the options
 options = {}
@@ -29,7 +30,7 @@ optparse = OptionParser.new do |opts|
   end
   opts.on('-h', '--help', 'Display this help and exit') do
     puts opts
-    exit
+    exit(0)
   end
   opts.on('-i', '--init REMOTE', 'Initiliaze dotrs by cloning REMOTE') do |link|
     options[:init] = link
@@ -50,7 +51,7 @@ optparse = OptionParser.new do |opts|
   end
   opts.on('--version', 'Display version number and exit') do
     puts "dotrs #{VERSION}"
-    exit
+    exit(0)
   end
 end
 
@@ -59,26 +60,31 @@ begin
   optparse.parse!
 rescue OptionParser::InvalidOption
   puts('Invalid option, see `--help` for a further informations.')
-  exit
+  exit(1)
 rescue OptionParser::MissingArgument
   puts('No argument given, see `--help` for further informations')
-  exit
+  exit(1)
 end
 
 # Do one and only one thing depending on what the user asked (yeah it's ugly)
 # TODO: code properly
 if options.include?(:init)
   Actions.init(options[:init])
-elsif options.include?(:add)
-  Actions.add(options[:add], verbose: options[:verbose])
-elsif options.include?(:remove)
-  Actions.remove(options[:remove], verbose: options[:verbose])
-elsif options.include?(:save)
-  Actions.save(verbose: options[:verbose])
-  Actions.push
-elsif options.include?(:apply)
-  Actions.pull
-  Actions.apply(verbose: options[:verbose])
-elsif options.include?(:list)
-  Actions.list_tracked
+elsif !(Dir.exist?(Config::LOCAL_REPO_PATH))
+  puts 'No local repository found. Use `--init` first.'
+  exit(1)
+else
+  if options.include?(:add) 
+    Actions.add(options[:add], verbose: options[:verbose])
+  elsif options.include?(:remove)
+    Actions.remove(options[:remove], verbose: options[:verbose])
+  elsif options.include?(:save)
+    Actions.save(verbose: options[:verbose])
+    Actions.push
+  elsif options.include?(:apply)
+    Actions.pull
+    Actions.apply(verbose: options[:verbose])
+  elsif options.include?(:list)
+    Actions.list_tracked
+  end
 end
