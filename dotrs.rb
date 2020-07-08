@@ -9,7 +9,7 @@
 #  5. Backup the original dotfiles before overwriting them?
 
 require 'optparse'
-require_relative 'actions.rb'
+require_relative 'src/actions.rb'
 
 VERSION = '1.0.1'
 
