@@ -17,33 +17,21 @@ VERSION = '1.0.2'
 # Set up the options
 options = {}
 optparse = OptionParser.new do |opts|
-  opts.banner = "Straightforward dofiles management\n\n"                       \
-                "Usage: dotrs [-v] OPTION\n\n"                                 \
+  opts.banner = "Usage: dotrs COMMAND [OPTION]...\n\n"                         \
+                "Straightforward dofiles management\n\n"                       \
+                "Commands:\n"                                                  \
+                "\tinit REMOTE\t\tClone the source repository\n"               \
+                "\tadd FILE...\t\tAdd FILE to the source repository\n"         \
+                "\tremove FILE...\t\tRemove FILE from the source repository\n" \
+                "\tapply\t\t\tPull the latest changes and replace all "        \
+                "targeted files\n"                                             \
+                "\tsave\t\t\tCopy all tracked files to the source repository " \
+                "and push to remote\n"                                         \
+                "\tlist\t\t\tList all currently tracked files\n\n"             \
                 "Options:\n"
-
-  opts.on('-a', '--add FILE[,...]', Array,
-          'Add FILE to the local repository') do |file|
-    options[:add] = file
-  end
-  opts.on('-A', '--apply', 'Pull and replace the target files') do
-    options[:apply] = true
-  end
-  opts.on('-h', '--help', 'Display this help and exit') do
+  opts.on('--help', 'Display this help and exit') do
     puts opts
     exit(0)
-  end
-  opts.on('-i', '--init REMOTE', 'Initiliaze dotrs by cloning REMOTE') do |link|
-    options[:init] = link
-  end
-  opts.on('-l', '--list', 'List all currently tracked files') do
-    options[:list] = true
-  end
-  opts.on('-r', '--remove FILE[,...]', Array,
-          'Remove FILE from the local repository ') do |files|
-    options[:remove] = files
-  end
-  opts.on('-s', '--save', 'Copy and push the local files.') do
-    options[:save] = true
   end
   options[:verbose] = false
   opts.on('-v', '--verbose', 'Display what is being done') do
@@ -66,25 +54,4 @@ rescue OptionParser::MissingArgument
   exit(1)
 end
 
-# Do one and only one thing depending on what the user asked (yeah it's ugly)
-# TODO: code properly
-if options.include?(:init)
-  Actions.init(options[:init])
-elsif !(Dir.exist?(Config::LOCAL_REPO_PATH))
-  puts 'No local repository found. Use `--init` first.'
-  exit(1)
-else
-  if options.include?(:add) 
-    Actions.add(options[:add], verbose: options[:verbose])
-  elsif options.include?(:remove)
-    Actions.remove(options[:remove], verbose: options[:verbose])
-  elsif options.include?(:save)
-    Actions.save(verbose: options[:verbose])
-    Actions.push
-  elsif options.include?(:apply)
-    Actions.pull
-    Actions.apply(verbose: options[:verbose])
-  elsif options.include?(:list)
-    Actions.list_tracked
-  end
-end
+
