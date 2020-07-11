@@ -10,30 +10,29 @@
 
 require 'optparse'
 require_relative 'src/actions.rb'
-require_relative 'src/config'
+require_relative 'src/config.rb'
 
-VERSION = '1.0.2'
+VERSION = '2.0.0'
 
 # Set up the options
 options = {}
 optparse = OptionParser.new do |opts|
   opts.banner = "Usage: dotrs COMMAND [OPTION]...\n\n"                         \
-                "Straightforward dofiles management\n\n"                       \
+                "Straightforward dotfiles management\n\n"                      \
                 "Commands:\n"                                                  \
-                "\tinit REMOTE\t\tClone the source repository\n"               \
                 "\tadd FILE...\t\tAdd FILE to the source repository\n"         \
-                "\tremove FILE...\t\tRemove FILE from the source repository\n" \
                 "\tapply\t\t\tPull the latest changes and replace all "        \
-                "targeted files\n"                                             \
+                "tracked files\n"                                              \
+                "\tinit REMOTE\t\tClone the source repository\n"               \
+                "\tlist\t\t\tList all currently tracked files\n"               \
+                "\tremove FILE...\t\tRemove FILE from the source repository\n" \
                 "\tsave\t\t\tCopy all tracked files to the source repository " \
-                "and push to remote\n"                                         \
-                "\tlist\t\t\tList all currently tracked files\n\n"             \
+                "and push\n\n"                                                 \
                 "Options:\n"
   opts.on('--help', 'Display this help and exit') do
     puts opts
     exit(0)
   end
-  options[:verbose] = false
   opts.on('-v', '--verbose', 'Display what is being done') do
     options[:verbose] = true
   end
@@ -49,9 +48,30 @@ begin
 rescue OptionParser::InvalidOption
   puts('Invalid option, see `--help` for a further informations.')
   exit(1)
-rescue OptionParser::MissingArgument
-  puts('No argument given, see `--help` for further informations')
+end
+
+if ARGV.empty?
+  puts('No command given, see `--help` for further informations.')
   exit(1)
 end
 
-
+case ARGV[0].to_sym
+when :init
+  Actions.init(ARGV[1])
+when :add
+  Actions.add(ARGV[1..-1])
+when :remove
+  Actions.remove(ARGV[1..-1])
+when :save
+  Actions.save
+  Actions.push
+when :apply
+  Actions.pull
+  Actions.apply
+when :list
+  Actions.list
+else
+  puts("dotrs: unknown command '#{ARGV[0]}'.")
+  puts("Type 'dotrs --help' for a list of available commands.")
+  exit(1)
+end

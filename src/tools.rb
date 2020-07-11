@@ -6,14 +6,14 @@ module Tools
 
   require_relative 'config.rb'
 
-  # Return the original file path in the filesystem.
+  # Return the original path of the file in the filesystem.
   def original_path(file)
-    File.expand_path(file).delete_prefix(Config::LOCAL_REPO_PATH)
+    File.expand_path(file).delete_prefix(Config::SOURCE_REPO_PATH)
   end
 
-  # Return the modified file path to include the local repository.
+  # Return the modified file path to include the source repository.
   def dotrs_path(file)
-    File.join(Config::LOCAL_REPO_PATH, File.expand_path(file))
+    File.join(Config::SOURCE_REPO_PATH, File.expand_path(file))
   end
 
   # Calls the block once for each entry except for '.' and '..' in this

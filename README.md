@@ -27,32 +27,32 @@ dotrs needs a remote repository for managing your dotfiles. Create an empty one
 on GitHub (or other) if you don't already have one. Use the following command to
 initialize dotrs :
 
-`$ dotrs --init REMOTE-URL`
+`$ dotrs init REMOTE-URL`
 
 ## Usage
 
 ### Adding files and saving changes
 
-Add a file to the local repository with `--add`. This will cause dotrs to keep
-track of the file:
+Add a file to the source repository with the `add` command. This will cause
+dotrs to keep track of the file:
 
-`$ dotrs --add ~/.bashrc`
+`$ dotrs add ~/.bashrc`
 
-Similarly, use `--remove` to stop dotrs from tracking a file.
+Similarly, use `remove` to stop dotrs from tracking a file.
 
 Once files have been added or modified, save the changes with:
 
-`$ dotrs --save`
+`$ dotrs save`
 
-It will copy all the tracked files to the local repository and push to remote.
+It will copy all the tracked files to the source repository and push to remote.
 
 ### Retrieving files and applying
 
 To pull the latest changes from the remote repository and replace all your
 currently tracked files, simply use:
 
-`$ dotrs --apply`
+`$ dotrs apply`
 
 ### Checking for tracked files
 
-Use `--list` to view all currently tracked files.
+Use the `list` command to view all currently tracked files.
