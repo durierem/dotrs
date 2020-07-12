@@ -11,7 +11,7 @@ require 'optparse'
 require_relative 'src/actions.rb'
 require_relative 'src/config.rb'
 
-VERSION = '1.1.0'
+VERSION = '1.2.0'
 
 # Set up the options
 options = {}
