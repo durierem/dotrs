@@ -13,6 +13,9 @@ service such as GitHub without the mess created by other common solutions
 
 ## Installation
 
+First, Ruby and Git need to be installed. Refer to your distribution's package
+management tools for further installation details.
+
 To install dotrs system-wide:
 
 `$ sudo bash install.sh`
@@ -20,6 +23,9 @@ To install dotrs system-wide:
 To install dotrs locally (without root access):
 
 `$ bash install.sh --local`
+
+If you use the second option, don't forget to add `$HOME/.local/bin/` to your
+`$PATH` environment variable.
 
 ## Setup
 
