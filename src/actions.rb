@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# actions.rb: contain all the actions related to the management of dotfiles.
+# All the actions related to the management of dotfiles such as add/save/etc...
 module Actions
   module_function
 
@@ -38,7 +38,8 @@ module Actions
     files.each do |file|
       file = File.expand_path(file)
       begin
-        FileUtils.rm(File.join(Config::SOURCE_REPO_PATH, file), verbose: verbose)
+        FileUtils.rm(File.join(Config::SOURCE_REPO_PATH, file),
+                     verbose: verbose)
       rescue StandardError
         puts("Unable to remove #{Tools.original_path(file)} from tracked files")
         exit(1)
@@ -49,7 +50,7 @@ module Actions
 
   # Copy each of the tracked files into the source repository, replacing any
   # copy already existing.
-  def save(verbose: false)
+  def save_to_source(verbose: false)
     Tools.each_child_rec(Config::SOURCE_REPO_PATH) do |file|
       next if File.expand_path(file).include?('.git')
 
@@ -57,9 +58,9 @@ module Actions
     end
   end
 
-  # Copy each of the tracked files from the source repositroy to their respective
-  # original location in the filesystem.
-  def apply(verbose: false)
+  # Copy each of the tracked files from the source repositroy to their
+  # respective original location in the filesystem.
+  def apply_from_source(verbose: false)
     Tools.each_child_rec(Config::SOURCE_REPO_PATH) do |file|
       next File.expand_path(file).include?('.git')
 

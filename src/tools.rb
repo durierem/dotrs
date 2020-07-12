@@ -1,17 +1,19 @@
 # frozen_string_literal: true
 
-# tools.rb: contain utility methods.
+# Utility methods.
 module Tools
   module_function
 
   require_relative 'config.rb'
 
   # Return the original path of the file in the filesystem.
+  # Example: /home/user/.dotfiles/home/user/foo => /home/user/foo
   def original_path(file)
     File.expand_path(file).delete_prefix(Config::SOURCE_REPO_PATH)
   end
 
   # Return the modified file path to include the source repository.
+  # Example: /home/user/foo => /home/user/.dotfiles/home/user/foo
   def dotrs_path(file)
     File.join(Config::SOURCE_REPO_PATH, File.expand_path(file))
   end
