@@ -62,7 +62,7 @@ module Actions
   # respective original location in the filesystem.
   def apply_from_source(verbose: false)
     Tools.each_child_rec(Config::SOURCE_REPO_PATH) do |file|
-      next File.expand_path(file).include?('.git')
+      next if File.expand_path(file).include?('.git')
 
       parent_directory = Tools.original_path(file)
                               .delete_suffix(File.basename(file))
@@ -80,6 +80,7 @@ module Actions
 
   # Pull the source repository.
   def pull
+    system('git config pull.rebase false')
     system("git -C #{Config::SOURCE_REPO_PATH} pull")
   end
 

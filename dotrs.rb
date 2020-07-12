@@ -28,9 +28,18 @@ optparse = OptionParser.new do |opts|
                 "\tsave\t\t\tCopy all tracked files to the source repository " \
                 "and push\n\n"                                                 \
                 "Options:\n"
+  opts.on('--copy-only', 'Copy files, but don\'t push nor pull') do
+    options[:copyonly] = true
+  end
   opts.on('--help', 'Display this help and exit') do
     puts opts
     exit(0)
+  end
+  opts.on('--pull-only', 'Pull the source repository but don\'t copy files') do
+    options[:pullonly] = true
+  end
+  opts.on('--push-only', 'Push the source repository but don\'t copy files') do
+    options[:pushonly] = true
   end
   opts.on('-v', '--verbose', 'Display what is being done') do
     options[:verbose] = true
@@ -58,23 +67,28 @@ if ARGV.empty?
 end
 
 # Execute actions depending on the command
-case ARGV[0].to_sym
-when :init
-  Actions.init(ARGV[1])
-when :add
-  Actions.add(ARGV[1..-1], verbose: options[:verbose])
-when :remove
-  Actions.remove(ARGV[1..-1], verbose: options[:verbose])
-when :save
-  Actions.save_to_source(verbose: options[:verbose])
-  Actions.push
-when :apply
-  Actions.pull
-  Actions.apply_from_source(verbose: options[:verbose])
-when :list
-  Actions.list
-else
-  puts("dotrs: unknown command '#{ARGV[0]}'.")
-  puts('Type `dotrs --help` for a list of available commands.')
+begin
+  case ARGV[0].to_sym
+  when :init
+    Actions.init(ARGV[1])
+  when :add
+    Actions.add(ARGV[1..-1], verbose: options[:verbose])
+  when :remove
+    Actions.remove(ARGV[1..-1], verbose: options[:verbose])
+  when :save
+    Actions.save_to_source(verbose: options[:verbose]) unless options[:pushonly]
+    Actions.push unless options[:copyonly]
+  when :apply
+    Actions.pull unless options[:copyonly]
+    Actions.apply_from_source(verbose: options[:verbose]) unless options[:pullonly]
+  when :list
+    Actions.list
+  else
+    puts("dotrs: unknown command '#{ARGV[0]}'.")
+    puts('Type `dotrs --help` for a list of available commands.')
+    exit(1)
+  end
+rescue Interrupt
+  puts("\ndotrs: interrupted!")
   exit(1)
 end
