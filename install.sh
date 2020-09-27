@@ -5,7 +5,7 @@
 #   installs the program under '/usr/local/'.
 #   - Any previous installation will be removed before installing the new one.
 #   - Across this script, the so called 'binary' is a simple soft link to the
-#   entry file of the program.
+#   entry point of the program.
 
 # --- CONFIGURATION
 
@@ -21,7 +21,7 @@ if [[ $1 == '--local' ]]; then
   privileged=0
 else
   if [[ $EUID -ne 0 ]]; then
-    echo "$0: this script requires root privileges to install dotrs."
+    echo "$0: this script requires root privileges to install $name."
     echo "Run with sudo or use --local."
     exit 1
   fi
@@ -41,8 +41,6 @@ binpath=$bindir/$bin
 # --- INSTALLATION
 
 # exit_failure: exit the program with an error message.
-#   This function is made to be used as a test condition to check the return
-#   status of a command
 exit_failure() {
   echo "$0: an error occured while installing."
   exit 1

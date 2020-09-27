@@ -1,17 +1,14 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-## TODO:
-#  1. Use Git or Rugged (gems) to handle git operations
-#  2. Add options to pull/push/copy only
-#  3. Use the name of the user repo instead of forcing '.dotfiles'?
-#  4. Backup the original dotfiles before overwriting them?
-
 require 'optparse'
-require_relative 'src/actions.rb'
-require_relative 'src/config.rb'
+require_relative 'dotfilerepo.rb'
 
-VERSION = '1.2.0'
+VERSION = '2.0.0-alpha'
+
+# Exit status
+EXIT_SUCCESS = 0
+EXIT_FAILURE = 1
 
 # Set up the options
 options = {}
@@ -19,34 +16,23 @@ optparse = OptionParser.new do |opts|
   opts.banner = "Usage: dotrs COMMAND [OPTION]...\n\n"                         \
                 "Straightforward dotfiles management\n\n"                      \
                 "Commands:\n"                                                  \
-                "\tadd FILE...\t\tAdd FILE to the source repository\n"         \
-                "\tapply\t\t\tPull the latest changes and replace all "        \
-                "tracked files\n"                                              \
+                "\tadd FILE...\t\tAdd FILE to the tracked files\n"             \
+                "\tapply\t\t\tPull the latest changes\n"                       \
                 "\tinit REMOTE\t\tClone the REMOTE source repository\n"        \
                 "\tlist\t\t\tList all currently tracked files\n"               \
-                "\tremove FILE...\t\tRemove FILE from the source repository\n" \
-                "\tsave\t\t\tCopy all tracked files to the source repository " \
-                "and push\n\n"                                                 \
+                "\tremove FILE...\t\tRemove FILE from being tracked\n"         \
+                "\tsave\t\t\tPush local changes\n"                             \
                 "Options:\n"
-  opts.on('--copy-only', 'Copy files, but don\'t push nor pull') do
-    options[:copyonly] = true
-  end
   opts.on('--help', 'Display this help and exit') do
     puts opts
-    exit(0)
-  end
-  opts.on('--pull-only', 'Pull the source repository but don\'t copy files') do
-    options[:pullonly] = true
-  end
-  opts.on('--push-only', 'Push the source repository but don\'t copy files') do
-    options[:pushonly] = true
+    exit(EXIT_SUCCESS)
   end
   opts.on('-v', '--verbose', 'Display what is being done') do
     options[:verbose] = true
   end
   opts.on('--version', 'Display version number and exit') do
     puts "dotrs #{VERSION}"
-    exit(0)
+    exit(EXIT_SUCCESS)
   end
 end
 
@@ -63,32 +49,25 @@ end
 if ARGV.empty?
   puts('dotrs: no command given.')
   puts('Type `dotrs --help` for a list of available commands.')
-  exit(1)
+  exit(EXIT_FAILURE)
 end
 
 # Execute actions depending on the command
 begin
   case ARGV[0].to_sym
-  when :init
-    Actions.init(ARGV[1])
   when :add
-    Actions.add(ARGV[1..-1], verbose: options[:verbose])
-  when :remove
-    Actions.remove(ARGV[1..-1], verbose: options[:verbose])
-  when :save
-    Actions.save_to_source(verbose: options[:verbose]) unless options[:pushonly]
-    Actions.push unless options[:copyonly]
   when :apply
-    Actions.pull unless options[:copyonly]
-    Actions.apply_from_source(verbose: options[:verbose]) unless options[:pullonly]
+  when :init
+    DotfileRepo.new(ARGV[1])
   when :list
-    Actions.list
+  when :remove
+  when :save
   else
     puts("dotrs: unknown command '#{ARGV[0]}'.")
     puts('Type `dotrs --help` for a list of available commands.')
-    exit(1)
+    exit(EXIT_FAILURE)
   end
 rescue Interrupt
   puts("\ndotrs: interrupted!")
-  exit(1)
+  exit(EXIT_FAILURE)
 end
