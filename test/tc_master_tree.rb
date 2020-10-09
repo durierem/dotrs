@@ -1,65 +1,83 @@
 # frozen_string_literal: true
 
+$LOAD_PATH << '.'
+$LOAD_PATH << '../lib/'
+
 require 'test/unit'
 require 'fileutils'
-require_relative '../lib/master_tree'
-require_relative '../lib/assertion_error'
+require 'master_tree'
+require 'assertion_error'
+require 'test_environment'
 
+# Internal: Unit test for the MasterTree class.
 class TestMasterTree < Test::Unit::TestCase
-  TMP_DIR = '/tmp'
-  TMP_MASTER_TREE_NAME = File.join(TMP_DIR, 'master_tree')
-  TMP_FILE_NAME = File.join(TMP_DIR, 'foo')
-  TMP_FILE_NAME_1 = File.join(TMP_DIR, 'bar')
-  TMP_FILE_NAME_LN = "#{TMP_FILE_NAME}_ln"
+  include TestEnvironment
 
   def setup
-    FileUtils.mkdir(TMP_MASTER_TREE_NAME)
-    FileUtils.touch(TMP_FILE_NAME)
-    FileUtils.touch(TMP_FILE_NAME_1)
-    FileUtils.ln_s(TMP_FILE_NAME, TMP_FILE_NAME_LN)
+    TestEnvironment.setup
   end
 
   def teardown
-    FileUtils.rm(TMP_FILE_NAME)
-    FileUtils.rm(TMP_FILE_NAME_1)
-    FileUtils.rm(TMP_FILE_NAME_LN)
-    FileUtils.rm_r(TMP_MASTER_TREE_NAME)
+    TestEnvironment.teardown
+  end
+
+  def test_pre_new
+    assert_raise(AssertionError) { MasterTree.new(nil) }
+    assert_raise(AssertionError) { MasterTree.new('invalid/directory') }
   end
 
   def test_new
-    assert_raise(AssertionError) { MasterTree.new(nil) }
-    assert_raise(AssertionError) { MasterTree.new('invalid/directory') }
-    assert_nothing_raised { (MasterTree.new(TMP_MASTER_TREE_NAME)) }
+    assert_nothing_raised { MasterTree.new(MT_DIR) }
+  end
+
+  def test_pre_add
+    mt = MasterTree.new(MT_DIR)
+    assert_raise(AssertionError) { mt.add(nil) }
+    assert_raise(AssertionError) { mt.add('invalid_file') }
+    assert_raise(AssertionError) { mt.add(FILES[:link_sa]) }
+    assert_raise(AssertionError) { mt.add(FILES[:file_mt]) }
   end
 
   def test_add
-    t = MasterTree.new(TMP_MASTER_TREE_NAME)
-    assert_raise(AssertionError) { t.add(nil) }
-    assert_raise(AssertionError) { t.add('unknown_file') }
-    assert_raise(AssertionError) { t.add(TMP_FILE_NAME_LN)}
-    t.add(TMP_FILE_NAME)
-    assert(File.exist?(File.join(TMP_MASTER_TREE_NAME, TMP_FILE_NAME)) &&
-           !File.symlink?(File.join(TMP_MASTER_TREE_NAME, TMP_FILE_NAME)))
-    assert(File.exist?(TMP_FILE_NAME) && File.symlink?(TMP_FILE_NAME))
+    mt = MasterTree.new(MT_DIR)
+    assert_nothing_raised { mt.add(FILES[:file_std]) }
   end
 
-  def test_list
-    t = MasterTree.new(TMP_MASTER_TREE_NAME)
-    t.add(TMP_FILE_NAME)
-    t.add(TMP_FILE_NAME_1)
-    assert_not_nil(t.list)
-    assert_instance_of(Array, t.list)
-    assert(t.list.sort == [TMP_FILE_NAME_1, TMP_FILE_NAME])
+  def test_post_add
+    mt = MasterTree.new(MT_DIR)
+    mt.add(FILES[:file_std])
+    moved_file = File.join(MT_DIR, FILES[:file_std])
+    assert(File.exist?(moved_file) && !File.symlink?(moved_file))
+    assert(File.exist?(FILES[:file_std]) && File.symlink?(FILES[:file_std]))
+  end
+
+  def test_pre_remove
+    mt = MasterTree.new(MT_DIR)
+    assert_raise(AssertionError) { mt.remove(nil) }
+    assert_raise(AssertionError) { mt.remove('inalid_file') }
+    assert_raise(AssertionError) { mt.remove(FILES[:file_sa]) }
+    assert_raise(AssertionError) { mt.remove(FILES[:link_sa]) }
+    assert_raise(AssertionError) { mt.remove(FILES[:file_mt]) }
   end
 
   def test_remove
-    t = MasterTree.new(TMP_MASTER_TREE_NAME)
-    t.add(TMP_FILE_NAME)
-    assert_raise(AssertionError) { t.remove(nil) }
-    assert_raise(AssertionError) { t.remove('unknown_file') }
-    assert_raise(AssertionError) { t.remove(TMP_FILE_NAME) }
-    t.remove(TMP_FILE_NAME_LN)
-    assert(File.exist?(TMP_FILE_NAME) && !File.symlink?(TMP_FILE_NAME))
-    assert(!File.exist?(File.join(TMP_MASTER_TREE_NAME, TMP_FILE_NAME)))
+    mt = MasterTree.new(MT_DIR)
+    mt.add(FILES[:file_std])
+    assert_nothing_raised { mt.remove(FILES[:file_std]) }
+  end
+
+  def test_post_remove
+    assert(File.exist?(FILES[:file_std]) && !File.symlink?(FILES[:file_std]))
+    assert(!File.exist?(File.join(MT_DIR, FILES[:file_std])))
+    assert(!Dir.exist?(File.join(MT_DIR, STD_DIR)))
+  end
+
+  def test_list
+    mt = MasterTree.new(MT_DIR)
+    mt.add(FILES[:file_std])
+    list = mt.list
+    assert_not_nil(list)
+    assert_instance_of(Array, list)
+    assert(list.each { |file| !file.include?(MT_DIR) })
   end
 end

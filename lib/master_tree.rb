@@ -1,118 +1,156 @@
-#frozen_string_literal: true
+# frozen_string_literal: true
 
 require 'fileutils'
 require_relative 'contract.rb'
 
-# Internal: a directory tree that is a copy of a portion of the file system
-# hierarchy, starting from the root directory. A file in a MasterTree is pointed
-# to by a soft link of the same name at the location of the original file.
+# Internal: A directory where each file is as a reference for a symbolic link.
+#
+# Adding a file to a MasterTree moves the said file under the MasterTree's root
+# directory and creates a symbolic link at the file's original location,
+# pointing to the file's new location.
+#
+# If a file's original path is "/foo/bar/file" the new path of the same file,
+# after being added to a MasterTree is "mastertree_root_directory/foo/bar/file".
+#
+# In the following documentation, the terms "real" and "virtual" will be used
+# to describe, respectively, the original path of a file, and its path once
+# added in a MasterTree.
+#
+# Examples
+#
+#   t.add('/foo/bar/file')
+#   # Before:                    After:
+#   #   .                          .
+#   #   |                          |
+#   #   |-foo/                     |-foo/
+#   #   | |-bar/                   | |-bar/
+#   #   |   |-file                 |   |-link_to_file
+#   #   |                          |
+#   #   |-master_tree/             |-master_tree/
+#   #                                |-foo/
+#   #                                  |-bar/
+#   #                                    |-file
 class MasterTree
-  # Internal: Initialize a MasterTree.
-  #
-  # Pre:
-  # !path.nil? && Dir.exist?(path)
-  #
-  # path - The String representation of the path for the new MasterTree.
-  def initialize(path)
-    Contract.check(!path.nil? && Dir.exist?(path), 'invalid path')
+  # Internal: Returns the String asbolute path of the MasterTree.
+  attr_reader :path
 
-    @path = path
+  # Internal: Initialize a new MasterTree whose root directory is the given
+  # empty directory.
+  #
+  # dir_name - The String root directory name for the new MasterTree. The
+  #            directory must already exist. This parameter must not be null.
+  def initialize(dir_name)
+    Contract.check(!dir_name.nil? && Dir.exist?(dir_name),
+                   "invalid directory: #{dir_name}")
+
+    @path = File.absolute_path(dir_name)
   end
-  
-  # Internal: Add a file to this MasterTree.
-  # The added file is moved under this MasterTree's director and a soft link
-  # pointing at the moved file is created at its original location. The full
-  # tree structure from the root directroy is recreated in the MasterTree (see
-  # the example below).
+
+  # Internal: Add a file to the MasterTree.
   #
-  # Pre:
-  # !file_name.nil? && File.exist?(file_name) && !File.symlink?(file_name)
-  # 
-  # Post:
-  # File.symlink?(file_name)
-  # && File.readlink(file_name).end_with?(File.expand_path(file_name))
+  # The given file is moved under the MasterTree's root directory and a symbolic
+  # link referencing the moved file is then created at the old location of the
+  # file. The full path to the old file is recreated in the MasterTree (see the
+  # example below).
   #
-  # file_name - The String representation of the file to add.
-  #
-  # Examples
-  #
-  #   t.add('/path/to/file')
-  #   # Before:                    After:
-  #   #   .                          .
-  #   #   |                          |
-  #   #   |-foo/                     |-foo/
-  #   #   | |-bar/                   | |-bar/
-  #   #   |   |-file                 |   |-link_to_file
-  #   #   |                          |
-  #   #   |-master_tree/             |-master_tree/
-  #   #                                |-foo/
-  #   #                                  |-bar/
-  #   #                                    |-file
+  # file_name - The String name of the file to add. The file must exist, must
+  #             not be a symbolic link, and must not already be in the
+  #             MasterTree. This parameter must not be null.
   #
   # Returns nothing.
   def add(file_name)
     Contract.check(!file_name.nil? && File.exist?(file_name) &&
-                   !File.symlink?(file_name), 'invalid file')
+                    !File.symlink?(file_name) &&
+                   !File.absolute_path(file_name).include?(@path),
+                   "invalid file: #{file_name}")
 
-    parent = File.join(@path, File.dirname(File.expand_path(file_name)))
-    FileUtils.mkdir_p(parent) unless Dir.exist?(parent)
-    FileUtils.mv(file_name, parent)
-    FileUtils.ln_s(File.join(@path, file_name), file_name)
+    mt_parent = File.dirname(virtual_path(file_name))
+    FileUtils.mkdir_p(mt_parent) unless Dir.exist?(mt_parent)
+    FileUtils.mv(file_name, mt_parent)
+    FileUtils.ln_s(virtual_path(file_name), file_name)
   end
 
-  # Internal: Remove a file from this MasterTree.
-  # This method does the opposite of `add`: given a soft link that points to a
-  # file in this MasterTree, it replaces the link by the orginal file. If a
-  # directory in this MasterTree contains no file recursively, the empty branch
-  # is deleted.
+  # Internal: Remove a file from the MasterTree.
   #
-  # Pre:
-  # !link_name.nil?
-  # && File.symkink?(link_name)
-  # && File.exist?(File.readlink(link_name))
+  # This procedure does the opposite of adding a file to the MasterTree. The
+  # file located at the virtual path of the given file name is moved back at
+  # its original location. If this procedure leaves any empty directory in the
+  # MasterTree it is recursively removed until no path in the MasterTree ends
+  # with no file.
   #
-  # Post:
-  # File.exist?(link_name)
-  # && !File.symlink?(link_name)
+  # file_name - The String name of the file to remove. The file must be a
+  #             symbolic link to an existing file in the MasterTree. This
+  #             parameter must not be null.
   #
   # Returns nothing.
-  def remove(link_name)
-    Contract.check(!link_name.nil? && File.symlink?(link_name) &&
-                   File.exist?(File.readlink(link_name)))
-    FileUtils.rm(link_name)
-    FileUtils.mv(File.join(@path, link_name), link_name)
-    mt_parent = File.dirname(File.join(@path, link_name), link_name)
-    while Dir.empty?(mt_parent)
-      Filutils.rm_r(mt_parent)
-      mt_parent = File.dirname(mt_parent)
-    end
+  def remove(file_name)
+    Contract.check(!file_name.nil? &&
+                   File.symlink?(file_name) &&
+                   File.exist?(File.readlink(file_name)) &&
+                   File.readlink(file_name).include?(@path),
+                   "invalid file: #{file_name}")
+
+    FileUtils.rm(file_name)
+    FileUtils.mv(virtual_path(file_name), file_name)
+    remove_empty_dirs(@path)
   end
 
-  # Internal: Get the list of files in this MasterTree
+  # Internal: Get a list of all files in the MasterTree
   #
-  # Examples
-  #
-  #   t = MasterTree.new('path/to/directory')
-  #   t.add('foo')
-  #   t.add('bar')
-  #   t.list
-  #   # => ['path/to/foo', 'path/to/bar']
-  #
-  # Returns an Array containing the absolute paths of all the files in this
-  # MasterTree.
+  # Returns an Array the true String paths of all the files in the MasterTree.
   def list
     result = []
     each_child_rec(@path) { |file| result << file.delete_prefix(@path) }
-    return result
+    result
+  end
+
+  # Internal: Creates the corresponding link for every file in the MasterTree.
+  #
+  # Returns nothing.
+  def link_all
+    each_child_rec(@path) { |file| FileUtils.ln_s(file, real_path(file)) }
   end
 
   private
 
+  # Internal: Get the virtual path in the MasterTree corresponding to a real
+  # path in the filesystem.
+  #
+  # real_path - the String real path in the file system.
+  #
+  # Returns the String virtual path.
+  def virtual_path(real_path)
+    File.join(@path, File.absolute_path(real_path))
+  end
+
+  # Internal: Get the real path in the file system corresponding to a virtual
+  # path in the MasterTree.
+  #
+  # virtual_path - The String virtual path.
+  #
+  # Returns the String true path.
+  def real_path(virtual_path)
+    virtual_path.delete_prefix(@path)
+  end
+
+  def remove_empty_dirs(dir_name)
+    # mt_parent = File.dirname(virtual_path(file_name))
+    # while Dir.empty?(mt_parent)
+    #   FileUtils.rm_r(mt_parent) if Dir.exist?(mt_parent)
+    #   mt_parent = File.dirname(mt_parent)
+    # end
+    Dir.each_child(dir_name) do |entry|
+      next unless File.directory?(entry)
+
+      remove_empty_dirs(entry)
+    end
+  end
+
   # Internal: Call the given block once for each entry, recursively, in a
   # directory (except for '.' and '..'), passing the file name of each entry as
   # a parameter to the block.
-  # 
-  # dir_name - the String representation of the directory.
+  #
+  # dir_name - the String name of the directory.
   #
   # Returns nothing.
   def each_child_rec(dir_name)
