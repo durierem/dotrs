@@ -8,7 +8,7 @@ require 'master_tree'
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
 
-VERSION = '2.0.0-alpha'
+VERSION = '2.0.0'
 REPO_PATH = File.join(Dir.home, '.dotfiles')
 
 # Set up the options
