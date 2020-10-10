@@ -108,7 +108,11 @@ class MasterTree
   #
   # Returns nothing.
   def link_all
-    each_child_rec(@path) { |file| FileUtils.ln_s(file, real_path(file)) }
+    each_child_rec(@path) do |file|
+      parent = File.dirname(real_path(file))
+      FileUtils.mkdir_p(parent) unless Dir.exist?(parent)
+      FileUtils.ln_s(file, real_path(file), force: true)
+    end
   end
 
   private
@@ -157,7 +161,8 @@ class MasterTree
     raise 'No block given' unless block_given?
 
     Dir.glob("#{dir_name}/**/*", File::FNM_DOTMATCH).each do |file|
-      next if file == '.' || file == '..' || File.directory?(file)
+      next if file == '.' || file == '..' || File.directory?(file) ||
+              file.include?('.git')
 
       yield file
     end

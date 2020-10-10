@@ -50,40 +50,41 @@ if ARGV.empty?
   exit(EXIT_FAILURE)
 end
 
-command = ARGV[0].to_sym
+cmd = ARGV[0].to_sym
 
-# Check for existing local path
-if !Dir.exist?(REPO_PATH) && command != :init
-  puts('dotrs: not initialized')
-  puts('Type `dotrs --help` for a list of available commands.')
-  exit(EXIT_FAILURE)
-end
-
-if command == :init
+if cmd == :init
   begin
     Git.clone(ARGV[1], REPO_PATH)
   rescue Git::GitExecuteError
-    puts("dotrs: an error occured while cloning")
+    puts('dotrs: an error occured while cloning.')
     exit(EXIT_FAILURE)
   end
   exit(EXIT_SUCCESS)
 end
 
-# Execute actions depending on the command
+unless Dir.exist?(REPO_PATH)
+  puts('dotrs: not initialized')
+  puts('Type `dotrs --help` for a list of available commands.')
+  exit(EXIT_FAILURE)
+end
+
 begin
   mt = MasterTree.new(REPO_PATH)
   repo = Git.open(REPO_PATH)
-
-  case ARGV[0].to_sym
+  case cmd
   when :add
     ARGV[1..-1].each { |file| mt.add(file) }
+  when :apply
+    mt.link_all
   when :list
-    mt.list.each { |file| puts(file) unless File.expand_path(file).include?('git') }
+    mt.list.each { |file| puts(file) }
   when :remove
     ARGV[1..-1].each { |file| mt.remove(file) }
   when :pull
     repo.pull
   when :push
+    repo.add(all: true)
+    repo.commit('sync')
     repo.push
   else
     puts("dotrs: unknown command '#{ARGV[0]}'.")
