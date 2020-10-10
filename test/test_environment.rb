@@ -13,7 +13,7 @@ module TestEnvironment
     file_sa: File.join(TEST_DIR, 'file_sa'),
     link_sa: File.join(TEST_DIR, 'file_sa_sl'),
     file_std: File.join(STD_DIR, 'file_std')
-  }
+  }.freeze
 
   def self.setup
     FileUtils.mkdir_p(MT_DIR)
