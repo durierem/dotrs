@@ -1,9 +1,9 @@
+#!/usr/bin/env ruby
 # frozen_string_literal: true
 
-$LOAD_PATH << '../lib/'
 require 'git'
 require 'optparse'
-require 'master_tree'
+require_relative '../lib/master_tree'
 
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1

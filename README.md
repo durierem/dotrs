@@ -5,7 +5,18 @@
 ## What does dotrs do?
 
 dotrs uses a hidden git repository, placed in your `$HOME` folder to store
-the dotfiles you want to keep synchronized.
+the dotfiles you want to keep synchronized. Then it creates links to them in
+your file system at the right location.
+
+## Installation
+
+dotrs is installed as a Ruby gem. To install dotrs, use the following commands:
+
+```
+git clone https://github.com/Sevodric/dotrs && cd dotrs
+gem build dotrs.gemspec
+gem install dotrs
+```
 
 ## Setup
 
@@ -29,6 +40,16 @@ Similarly, use `remove` to stop dotrs from tracking a file.
 Once files have been added or modified, save the changes with:
 
 `$ dotrs push`
+
+### Retrieving changes
+
+Get the last changes from the remove:
+
+`$ dotrs pull`
+
+Link any new missing file with:
+
+`$ dotrs apply`
 
 ### Checking for tracked files
 
