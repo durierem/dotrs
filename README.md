@@ -13,16 +13,16 @@ your file system at the right location.
 dotrs is installed as a Ruby gem. To install dotrs, use the following commands:
 
 ```
-git clone https://github.com/Sevodric/dotrs && cd dotrs
-gem build dotrs.gemspec
-gem install dotrs
+$ git clone https://github.com/Sevodric/dotrs && cd dotrs
+$ gem build dotrs.gemspec
+$ gem install dotrs
 ```
 
 ## Setup
 
 dotrs needs a remote repository for managing your dotfiles. Create an empty one
 on GitHub (or other) if you don't already have one. Afterward, use the following
-command to initialize dotrs :
+command to initialize dotrs:
 
 `$ dotrs init REMOTE-URL`
 
