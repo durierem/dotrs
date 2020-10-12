@@ -12,6 +12,11 @@ require_relative 'contract.rb'
 # If a file's original path is "/foo/bar/file" the new path of the same file,
 # after being added to a MasterTree is "mastertree_root_directory/foo/bar/file".
 #
+# By default, the depth of path's reproduction is the root '/' directory; which
+# means that the full path to the file is recreated in the MasterTree. One can
+# specify the depth of path when creating a new MasterTree. The path of an added
+# file will be reproduced only until the given directory is reached.
+#
 # In the following documentation, the terms "real" and "virtual" will be used
 # to describe, respectively, the original path of a file, and its path once
 # added in a MasterTree.
@@ -31,19 +36,22 @@ require_relative 'contract.rb'
 #   #                                  |-bar/
 #   #                                    |-file
 class MasterTree
-  # Internal: Returns the String asbolute path of the MasterTree.
-  attr_reader :path
-
   # Internal: Initialize a new MasterTree whose root directory is the given
   # empty directory.
   #
   # dir_name - The String root directory name for the new MasterTree. The
   #            directory must already exist. This parameter must not be null.
-  def initialize(dir_name)
+  # max_depth - The String directory name for the maximum depth each file's path
+  #             will be reproduced. The directory must already exist. This
+  #             paramater must not be null.
+  def initialize(dir_name, max_depth = '/')
     Contract.check(!dir_name.nil? && Dir.exist?(dir_name),
                    "invalid directory: #{dir_name}")
+    Contract.check(!max_depth.nil? && Dir.exist?(max_depth),
+                   "invalid maximum depth: #{max_depth}")
 
     @path = File.absolute_path(dir_name)
+    @max_depth = max_depth
   end
 
   # Internal: Add a file to the MasterTree.
@@ -100,7 +108,10 @@ class MasterTree
   # Returns an Array the true String paths of all the files in the MasterTree.
   def list
     result = []
-    each_child_rec(@path) { |file| result << file.delete_prefix(@path) }
+    each_child_rec(@path) do |file|
+      file_name = File.join(Dir.home, file.delete_prefix(@path))
+      result << file_name
+    end
     result
   end
 
@@ -124,7 +135,8 @@ class MasterTree
   #
   # Returns the String virtual path.
   def virtual_path(real_path)
-    File.join(@path, File.absolute_path(real_path))
+    File.join(@path,
+              File.absolute_path(real_path).delete_prefix("#{@max_depth}/"))
   end
 
   # Internal: Get the real path in the file system corresponding to a virtual
@@ -138,11 +150,6 @@ class MasterTree
   end
 
   def remove_empty_dirs(dir_name)
-    # mt_parent = File.dirname(virtual_path(file_name))
-    # while Dir.empty?(mt_parent)
-    #   FileUtils.rm_r(mt_parent) if Dir.exist?(mt_parent)
-    #   mt_parent = File.dirname(mt_parent)
-    # end
     Dir.each_child(dir_name) do |entry|
       next unless File.directory?(entry)
 

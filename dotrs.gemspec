@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
+require_relative 'lib/version.rb'
+
 Gem::Specification.new do |spec|
   spec.name        = 'dotrs'
-  spec.version     = '2.0.0'
+  spec.version     = Dotrs::VERSION
   spec.date        = '2020-10-10'
   spec.summary     = 'Straighforward dotfiles management'
   spec.description = 'Straighforward dotfiles management'

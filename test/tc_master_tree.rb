@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
-$LOAD_PATH << '.'
-$LOAD_PATH << '../lib/'
-
 require 'test/unit'
 require 'fileutils'
-require 'master_tree'
-require 'assertion_error'
-require 'test_environment'
+require_relative '../lib/master_tree'
+require_relative '../lib/assertion_error'
+require_relative 'test_environment'
 
 # Internal: Unit test for the MasterTree class.
 class TestMasterTree < Test::Unit::TestCase
@@ -24,6 +21,8 @@ class TestMasterTree < Test::Unit::TestCase
   def test_pre_new
     assert_raise(AssertionError) { MasterTree.new(nil) }
     assert_raise(AssertionError) { MasterTree.new('invalid/directory') }
+    assert_raise(AssertionError) { MasterTree.new(MT_DIR, nil) }
+    assert_raise(AssertionError) { MasterTree.new(MT_DIR, 'invalid/directory') }
   end
 
   def test_new
@@ -54,7 +53,7 @@ class TestMasterTree < Test::Unit::TestCase
   def test_pre_remove
     mt = MasterTree.new(MT_DIR)
     assert_raise(AssertionError) { mt.remove(nil) }
-    assert_raise(AssertionError) { mt.remove('inalid_file') }
+    assert_raise(AssertionError) { mt.remove('invalid_file') }
     assert_raise(AssertionError) { mt.remove(FILES[:file_sa]) }
     assert_raise(AssertionError) { mt.remove(FILES[:link_sa]) }
     assert_raise(AssertionError) { mt.remove(FILES[:file_mt]) }
@@ -78,6 +77,6 @@ class TestMasterTree < Test::Unit::TestCase
     list = mt.list
     assert_not_nil(list)
     assert_instance_of(Array, list)
-    assert(list.each { |file| !file.include?(MT_DIR) })
+    assert(list.none? { |file| file.include?(MT_DIR) })
   end
 end

@@ -4,11 +4,11 @@
 require 'git'
 require 'optparse'
 require_relative '../lib/master_tree'
+require_relative '../lib/version.rb'
 
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
 
-VERSION = '2.0.0'
 REPO_PATH = File.join(Dir.home, '.dotfiles')
 
 # Set up the options
@@ -29,7 +29,7 @@ optparse = OptionParser.new do |opts|
     exit(EXIT_SUCCESS)
   end
   opts.on('--version', 'Display version number and exit') do
-    puts "dotrs #{VERSION}"
+    puts "dotrs #{Dotrs::VERSION}"
     exit(EXIT_SUCCESS)
   end
 end
@@ -50,8 +50,10 @@ if ARGV.empty?
   exit(EXIT_FAILURE)
 end
 
+# Get the command given by the user
 cmd = ARGV[0].to_sym
 
+# Handle the init command
 if cmd == :init
   begin
     Git.clone(ARGV[1], REPO_PATH)
@@ -62,18 +64,28 @@ if cmd == :init
   exit(EXIT_SUCCESS)
 end
 
+# Exit if REPO_PATH doesn't exist
 unless Dir.exist?(REPO_PATH)
   puts('dotrs: not initialized')
   puts('Type `dotrs --help` for a list of available commands.')
   exit(EXIT_FAILURE)
 end
 
+# Handle other commands
 begin
-  mt = MasterTree.new(REPO_PATH)
+  mt = MasterTree.new(REPO_PATH, Dir.home)
   repo = Git.open(REPO_PATH)
   case cmd
   when :add
-    ARGV[1..-1].each { |file| mt.add(file) }
+    ARGV[1..-1].each do |file|
+      begin
+        mt.add(file)
+      rescue AssertionError
+        puts("dotrs: invalid file '#{file}'.")
+        puts('The file can\'t be a symbolic link.')
+        exit(EXIT_FAILURE)
+      end
+    end
   when :apply
     mt.link_all
   when :list
