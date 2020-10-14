@@ -13,17 +13,19 @@ REPO_PATH = File.join(Dir.home, '.dotfiles')
 
 # Set up the options
 optparse = OptionParser.new do |opts|
-  opts.banner = "Usage: dotrs COMMAND\n\n"                                     \
+  opts.banner = "Usage: dotrs COMMAND\n"                                       \
+                "       dotrs [OPTION]\n\n"                                    \
                 "Straightforward dotfiles management\n\n"                      \
                 "Commands:\n"                                                  \
                 "\tadd FILE...\t\tAdd FILE to the tracked files\n"             \
                 "\tapply\t\t\tLink all tracked files to their real location\n" \
+                "\tdiff\t\t\tSee local changes since last pull\n"              \
                 "\tinit REMOTE\t\tClone the REMOTE repository\n"               \
                 "\tlist\t\t\tList all currently tracked files\n"               \
                 "\tremove FILE...\t\tRemove FILE from being tracked\n"         \
                 "\tpull\t\t\tPull the latest changes\n"                        \
                 "\tpush\t\t\tPush local changes\n"                             \
-                "Options:\n"
+                "\nOptions:\n"
   opts.on('--help', 'Display this help and exit') do
     puts opts
     exit(EXIT_SUCCESS)
@@ -98,6 +100,11 @@ begin
     repo.add(all: true)
     repo.commit('sync')
     repo.push
+  when :diff
+    repo.diff('HEAD').each do |file_diff|
+      puts(file_diff.path)
+      puts(file_diff.patch)
+    end
   else
     puts("dotrs: unknown command '#{ARGV[0]}'.")
     puts('Type `dotrs --help` for a list of available commands.')
