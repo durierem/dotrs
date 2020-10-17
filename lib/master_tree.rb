@@ -68,7 +68,7 @@ class MasterTree
   # Returns nothing.
   def add(file_name)
     Contract.check(!file_name.nil? && File.exist?(file_name) &&
-                    !File.symlink?(file_name) &&
+                   !File.symlink?(file_name) &&
                    !File.absolute_path(file_name).include?(@path),
                    "invalid file: #{file_name}")
 
@@ -146,7 +146,7 @@ class MasterTree
   #
   # Returns the String true path.
   def real_path(virtual_path)
-    virtual_path.delete_prefix(@path)
+    File.join(@max_depth, virtual_path.delete_prefix("#{@path}/"))
   end
 
   def remove_empty_dirs(dir_name)

@@ -79,4 +79,12 @@ class TestMasterTree < Test::Unit::TestCase
     assert_instance_of(Array, list)
     assert(list.none? { |file| file.include?(MT_DIR) })
   end
+
+  def test_link_all
+    mt = MasterTree.new(MT_DIR, TEST_DIR)
+    mt.add(FILES[:file_std])
+    FileUtils.rm(FILES[:file_std])
+    mt.link_all
+    assert(File.exist?(FILES[:file_std]) && File.symlink?(FILES[:file_std]))
+  end
 end
