@@ -6,9 +6,9 @@ require_relative 'master_tree'
 
 # Internal: Methods for each of dotrs' commands.
 module Commands
-  PATH = File.join(Dir.home, '.dotfiles')
-
   class << self
+    PATH = File.join(Dir.home, '.dotfiles')
+
     def add(files)
       mt = MasterTree.new(PATH, Dir.home)
       files.each do |file|
@@ -69,37 +69,42 @@ module Commands
         puts(file_diff.patch)
       end
     end
-  end
 
-  def compute_commit_message
-    msg = String.new("dotrs: push from '#{Socket.gethostname}'\n")
-    msg << added_files_message
-    msg << changed_files_message
-    msg << deleted_files_message
-    msg
-  end
+    private
 
-  def added_files_message
-    return '' if Git.open(PATH).status.added.empty?
+    def compute_commit_message
+      msg = String.new("dotrs: push from '#{Socket.gethostname}'\n")
+      msg << added_files_message
+      msg << changed_files_message
+      msg << deleted_files_message
+      msg
+    end
 
-    result = "\nFile(s) added:\n"
-    repo.status.added.each_key { |file| result += "  #{file}\n" }
-    result
-  end
+    def added_files_message
+      return '' if Git.open(PATH).status.added.empty?
 
-  def changed_files_message
-    return '' if Git.open(PATH).status.changed.empty?
+      result = "\nFile(s) added:\n"
+      repo = Git.open(PATH)
+      repo.status.added.each_key { |file| result += "  #{file}\n" }
+      result
+    end
 
-    result = "\nFile(s) changed:\n"
-    repo.status.changed.each_key { |file| result += "  #{file}\n" }
-    result
-  end
+    def changed_files_message
+      return '' if Git.open(PATH).status.changed.empty?
 
-  def deleted_files_message
-    return '' if Git.open(PATH).status.deleted.empty?
+      result = "\nFile(s) changed:\n"
+      repo = Git.open(PATH)
+      repo.status.changed.each_key { |file| result += "  #{file}\n" }
+      result
+    end
 
-    result = "\nFile(s) deleted:\n"
-    repo.status.deleted.each_key { |file| result += "  #{file}\n" }
-    result
+    def deleted_files_message
+      return '' if Git.open(PATH).status.deleted.empty?
+
+      result = "\nFile(s) deleted:\n"
+      repo = Git.open(PATH)
+      repo.status.deleted.each_key { |file| result += "  #{file}\n" }
+      result
+    end
   end
 end
