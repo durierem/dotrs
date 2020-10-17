@@ -6,68 +6,68 @@ require_relative 'master_tree'
 
 # Internal: Methods for each of dotrs' commands.
 module Commands
-  module_function
-
   PATH = File.join(Dir.home, '.dotfiles')
 
-  def add(files)
-    mt = MasterTree.new(PATH, Dir.home)
-    files.each do |file|
-      begin
-        mt.add(file)
-      rescue AssertionError
-        abort("dotrs: invalid file '#{file}'.")
+  class << self
+    def add(files)
+      mt = MasterTree.new(PATH, Dir.home)
+      files.each do |file|
+        begin
+          mt.add(file)
+        rescue AssertionError
+          abort("dotrs: invalid file '#{file}'.")
+        end
       end
     end
-  end
 
-  def apply
-    MasterTree.new(PATH, Dir.home).link_all
-  end
-
-  def init(origin)
-    Git.clone(origin, REPO_PATH)
-  rescue Git::GitExecuteError
-    abort('dotrs: an error occured while cloning.')
-  end
-
-  def list
-    mt = MasterTree.new(PATH, Dir.home)
-    mt.list.each { |file| puts(file) }
-  end
-
-  def remove(files)
-    mt = MasterTree.new(PATH, Dir.home)
-    files.each do |file|
-      begin
-        mt.remove(file)
-      rescue AssertionError
-        abort("dotrs: invalid file '#{file}'.")
-      end
+    def apply
+      MasterTree.new(PATH, Dir.home).link_all
     end
-  end
 
-  def pull
-    Git.open(PATH).pull
-  rescue Git::GitExecuteError
-    abort('dotrs: an error occured while pulling.')
-  end
-
-  def push
-    repo = Git.open(PATH)
-    repo.add(all: true)
-    repo.commit(compute_commit_message)
-    begin
-      repo.push
+    def init(origin)
+      Git.clone(origin, REPO_PATH)
     rescue Git::GitExecuteError
-      abort('dotrs: an error occured while pushing.')
+      abort('dotrs: an error occured while cloning.')
     end
-  end
 
-  def diff
-    Git.open(PATH).diff('HEAD').each do |file_diff|
-      puts(file_diff.path)
-      puts(file_diff.patch)
+    def list
+      mt = MasterTree.new(PATH, Dir.home)
+      mt.list.each { |file| puts(file) }
+    end
+
+    def remove(files)
+      mt = MasterTree.new(PATH, Dir.home)
+      files.each do |file|
+        begin
+          mt.remove(file)
+        rescue AssertionError
+          abort("dotrs: invalid file '#{file}'.")
+        end
+      end
+    end
+
+    def pull
+      Git.open(PATH).pull
+    rescue Git::GitExecuteError
+      abort('dotrs: an error occured while pulling.')
+    end
+
+    def push
+      repo = Git.open(PATH)
+      repo.add(all: true)
+      repo.commit(compute_commit_message)
+      begin
+        repo.push
+      rescue Git::GitExecuteError
+        abort('dotrs: an error occured while pushing.')
+      end
+    end
+
+    def diff
+      Git.open(PATH).diff('HEAD').each do |file_diff|
+        puts(file_diff.path)
+        puts(file_diff.patch)
+      end
     end
   end
 

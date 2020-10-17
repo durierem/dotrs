@@ -1,13 +1,9 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'git'
 require 'optparse'
-require_relative '../lib/master_tree'
-require_relative '../lib/version.rb'
-
-EXIT_SUCCESS = 0
-EXIT_FAILURE = 1
+require_relative '../lib/version'
+require_relative '../lib/commands'
 
 REPO_PATH = File.join(Dir.home, '.dotfiles')
 
@@ -28,11 +24,11 @@ optparse = OptionParser.new do |opts|
                 "\nOptions:\n"
   opts.on('--help', 'Display this help and exit') do
     puts opts
-    exit(EXIT_SUCCESS)
+    exit(true)
   end
   opts.on('--version', 'Display version number and exit') do
     puts "dotrs #{Dotrs::VERSION}"
-    exit(EXIT_SUCCESS)
+    exit(true)
   end
 end
 
@@ -40,77 +36,44 @@ end
 begin
   optparse.parse!
 rescue OptionParser::InvalidOption
-  puts('dotrs: invalid option.')
-  puts('Type `dotrs --help` for a list of available commands.')
-  exit(1)
+  abort('dotrs: invalid option.')
 end
 
 # Check if a command has been given
-if ARGV.empty?
-  puts('dotrs: no command given.')
-  puts('Type `dotrs --help` for a list of available commands.')
-  exit(EXIT_FAILURE)
-end
+abort('dotrs: no command given.') if ARGV.empty?
 
 # Get the command given by the user
-cmd = ARGV[0].to_sym
+command = ARGV[0].to_sym
 
 # Handle the init command
-if cmd == :init
-  begin
-    Git.clone(ARGV[1], REPO_PATH)
-  rescue Git::GitExecuteError
-    puts('dotrs: an error occured while cloning.')
-    exit(EXIT_FAILURE)
-  end
-  exit(EXIT_SUCCESS)
+if command == :init
+  Commands.init
+  exit(true)
 end
 
 # Exit if REPO_PATH doesn't exist
-unless Dir.exist?(REPO_PATH)
-  puts('dotrs: not initialized')
-  puts('Type `dotrs --help` for a list of available commands.')
-  exit(EXIT_FAILURE)
-end
+abort('dotrs: not initialized') unless Dir.exist?(REPO_PATH)
 
 # Handle other commands
 begin
-  mt = MasterTree.new(REPO_PATH, Dir.home)
-  repo = Git.open(REPO_PATH)
-  case cmd
+  case command
   when :add
-    ARGV[1..-1].each do |file|
-      begin
-        mt.add(file)
-      rescue AssertionError
-        puts("dotrs: invalid file '#{file}'.")
-        puts('The file can\'t be a symbolic link.')
-        exit(EXIT_FAILURE)
-      end
-    end
+    Commands.add(ARGV[1..-1])
   when :apply
-    mt.link_all
+    Commands.apply
   when :list
-    mt.list.each { |file| puts(file) }
+    Commands.list
   when :remove
-    ARGV[1..-1].each { |file| mt.remove(file) }
+    Commands.remove(ARGV[1..-1])
   when :pull
-    repo.pull
+    Commands.pull
   when :push
-    repo.add(all: true)
-    repo.commit('sync')
-    repo.push
+    Commands.push
   when :diff
-    repo.diff('HEAD').each do |file_diff|
-      puts(file_diff.path)
-      puts(file_diff.patch)
-    end
+    Commands.diff
   else
-    puts("dotrs: unknown command '#{ARGV[0]}'.")
-    puts('Type `dotrs --help` for a list of available commands.')
-    exit(EXIT_FAILURE)
+    abort("dotrs: unknown command '#{ARGV[0]}'.")
   end
 rescue Interrupt
-  puts("\ndotrs: interrupted!")
-  exit(EXIT_FAILURE)
+  abort("\ndotrs: interrupted!")
 end
