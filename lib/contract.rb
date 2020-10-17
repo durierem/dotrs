@@ -6,9 +6,13 @@ require_relative 'assertion_error.rb'
 module Contract
   module_function
 
-  # check: raise an AssertionError with the message `msg` if and only if
-  #        `expresion` is not true.
-  def check(expression, msg = '')
-    raise AssertionError, msg unless expression
+  # Internal: Raise an AssertionError if the given expression is not true.
+  #
+  # expression - The expression to evaluate.
+  # (optional) message - The error message associated.
+  #
+  # Returns nothing.
+  def check(expression, message = '')
+    raise AssertionError, message unless expression
   end
 end
