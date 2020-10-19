@@ -47,7 +47,7 @@ command = ARGV[0].to_sym
 
 # Handle the init command
 if command == :init
-  Commands.init
+  Commands.init(ARGV[1])
   exit(true)
 end
 
