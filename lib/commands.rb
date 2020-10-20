@@ -3,14 +3,15 @@
 require 'socket'
 require 'git'
 require_relative 'master_tree'
+require_relative 'config'
 
 # Internal: Methods for each of dotrs' commands.
 module Commands
   class << self
-    PATH = File.join(Dir.home, '.dotfiles')
+    include Config
 
     def add(files)
-      mt = MasterTree.new(PATH, Dir.home)
+      mt = MasterTree.new(REPO_PATH, Dir.home)
       files.each do |file|
         begin
           mt.add(file)
@@ -21,7 +22,7 @@ module Commands
     end
 
     def apply
-      MasterTree.new(PATH, Dir.home).link_all
+      MasterTree.new(REPO_PATH, Dir.home).link_all
     end
 
     def init(origin)
@@ -31,12 +32,12 @@ module Commands
     end
 
     def list
-      mt = MasterTree.new(PATH, Dir.home)
+      mt = MasterTree.new(REPO_PATH, Dir.home)
       mt.list.each { |file| puts(file) }
     end
 
     def remove(files)
-      mt = MasterTree.new(PATH, Dir.home)
+      mt = MasterTree.new(REPO_PATH, Dir.home)
       files.each do |file|
         begin
           mt.remove(file)
@@ -47,13 +48,13 @@ module Commands
     end
 
     def pull
-      Git.open(PATH).pull
+      Git.open(REPO_PATH).pull
     rescue Git::GitExecuteError
       abort('dotrs: an error occured while pulling.')
     end
 
     def push
-      repo = Git.open(PATH)
+      repo = Git.open(REPO_PATH)
       repo.add(all: true)
       repo.commit(compute_commit_message)
       begin
@@ -63,10 +64,10 @@ module Commands
       end
     end
 
-    def diff
-      Git.open(PATH).diff('HEAD').each do |file_diff|
+    def diff(short = false)
+      Git.open(REPO_PATH).diff('HEAD').each do |file_diff|
         puts(file_diff.path)
-        puts(file_diff.patch)
+        puts(file_diff.patch) unless short
       end
     end
 
@@ -81,28 +82,28 @@ module Commands
     end
 
     def added_files_message
-      return '' if Git.open(PATH).status.added.empty?
+      return '' if Git.open(REPO_PATH).status.added.empty?
 
       result = "\nFile(s) added:\n"
-      repo = Git.open(PATH)
+      repo = Git.open(REPO_PATH)
       repo.status.added.each_key { |file| result += "  #{file}\n" }
       result
     end
 
     def changed_files_message
-      return '' if Git.open(PATH).status.changed.empty?
+      return '' if Git.open(REPO_PATH).status.changed.empty?
 
       result = "\nFile(s) changed:\n"
-      repo = Git.open(PATH)
+      repo = Git.open(REPO_PATH)
       repo.status.changed.each_key { |file| result += "  #{file}\n" }
       result
     end
 
     def deleted_files_message
-      return '' if Git.open(PATH).status.deleted.empty?
+      return '' if Git.open(REPO_PATH).status.deleted.empty?
 
       result = "\nFile(s) deleted:\n"
-      repo = Git.open(PATH)
+      repo = Git.open(REPO_PATH)
       repo.status.deleted.each_key { |file| result += "  #{file}\n" }
       result
     end

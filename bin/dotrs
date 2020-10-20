@@ -4,10 +4,10 @@
 require 'optparse'
 require_relative '../lib/version'
 require_relative '../lib/commands'
-
-REPO_PATH = File.join(Dir.home, '.dotfiles')
+require_relative '../lib/config'
 
 # Set up the options
+options = { short: false }
 optparse = OptionParser.new do |opts|
   opts.banner = "Usage: dotrs COMMAND\n"                                       \
                 "       dotrs [OPTION]\n\n"                                    \
@@ -22,6 +22,9 @@ optparse = OptionParser.new do |opts|
                 "\tpull\t\t\tPull the latest changes\n"                        \
                 "\tpush\t\t\tPush local changes\n"                             \
                 "\nOptions:\n"
+  opts.on('-s', '--short', 'Use with diff only. Display file names only') do
+      options[:short] = true;
+  end
   opts.on('--help', 'Display this help and exit') do
     puts opts
     exit(true)
@@ -52,7 +55,7 @@ if command == :init
 end
 
 # Exit if REPO_PATH doesn't exist
-abort('dotrs: not initialized') unless Dir.exist?(REPO_PATH)
+abort('dotrs: not initialized') unless Dir.exist?(Config::REPO_PATH)
 
 # Handle other commands
 begin
@@ -70,7 +73,7 @@ begin
   when :push
     Commands.push
   when :diff
-    Commands.diff
+    Commands.diff(options[:short])
   else
     abort("dotrs: unknown command '#{ARGV[0]}'.")
   end
