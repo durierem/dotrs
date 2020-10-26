@@ -7,11 +7,11 @@ require_relative '../lib/commands'
 require_relative '../lib/config'
 
 # Set up the options
-options = { short: false }
+options = { short: false, tree: false }
 optparse = OptionParser.new do |opts|
-  opts.banner = "Usage: dotrs COMMAND\n"                                       \
-                "       dotrs [OPTION]\n\n"                                    \
-                "Straightforward dotfiles management\n\n"                      \
+  opts.banner = "Straightforward dotfiles management\n\n"                      \
+                "Usage: dotrs COMMAND [OPTION]\n"                              \
+                "       dotrs --help | --version\n\n"                          \
                 "Commands:\n"                                                  \
                 "\tadd FILE...\t\tAdd FILE to the tracked files\n"             \
                 "\tapply\t\t\tLink all tracked files to their real location\n" \
@@ -22,8 +22,11 @@ optparse = OptionParser.new do |opts|
                 "\tpull\t\t\tPull the latest changes\n"                        \
                 "\tpush\t\t\tPush local changes\n"                             \
                 "\nOptions:\n"
-  opts.on('-s', '--short', 'Use with diff only. Display file names only') do
+  opts.on('-s', '--short', 'Use with diff, display file names only') do
       options[:short] = true;
+  end
+  opts.on('-t, --tree, ', 'Use with list, display files as a tree') do
+    options[:tree] = true
   end
   opts.on('--help', 'Display this help and exit') do
     puts opts

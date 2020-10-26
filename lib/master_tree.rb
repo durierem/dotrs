@@ -41,9 +41,9 @@ class MasterTree
   #
   # dir_name - The String root directory name for the new MasterTree. The
   #            directory must already exist. This parameter must not be null.
-  # max_depth - The String directory name for the maximum depth each file's path
-  #             will be reproduced. The directory must already exist. This
-  #             paramater must not be null.
+  # max_depth - (optional) the String directory name for the maximum depth each
+  #             file's path will be reproduced. The directory must already
+  #             exist. This paramater must not be null.
   def initialize(dir_name, max_depth = '/')
     Contract.check(!dir_name.nil? && Dir.exist?(dir_name),
                    "invalid directory: #{dir_name}")

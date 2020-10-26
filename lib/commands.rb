@@ -55,11 +55,11 @@ module Commands
 
     def push
       repo = Git.open(REPO_PATH)
-      repo.add(all: true)
-      repo.commit(compute_commit_message)
       begin
+        repo.commit_all(compute_commit_message)
         repo.push
-      rescue Git::GitExecuteError
+      rescue Git::GitExecuteError, Interrupt
+        repo.reset('HEAD^')
         abort('dotrs: an error occured while pushing.')
       end
     end
@@ -72,6 +72,11 @@ module Commands
     end
 
     private
+
+    def index_empty?
+      status = Git.open(REPO_PATH).status
+      status.added.empty? && status.deleted.empty? && status.changed.empty? 
+    end
 
     def compute_commit_message
       msg = String.new("dotrs: push from '#{Socket.gethostname}'\n")

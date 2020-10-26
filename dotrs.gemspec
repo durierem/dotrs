@@ -6,10 +6,9 @@ require_relative 'lib/version.rb'
 Gem::Specification.new do |spec|
   spec.name        = 'dotrs'
   spec.version     = Dotrs::VERSION
-  spec.date        = Date.today.to_s
+  spec.date        = '2020-10-19'
   spec.summary     = 'Straighforward dotfiles management'
-  spec.description = 'dotrs is a small program to help managing dotfiles ' \
-                     'with a GitHub repository.'
+  spec.description = 'dotrs helps managing dotfiles with a GitHub repository.'
   spec.author      = 'Rémi Durieu'
   spec.email       = 'remi.durieu@univ-rouen.fr'
   spec.files       = [
