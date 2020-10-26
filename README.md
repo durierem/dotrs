@@ -29,9 +29,8 @@ command to initialize dotrs:
 ## Usage
 
 The following is an overview of the basic workflow with Dotrs.
-For an exhaustive list of available commands and their options, see
-
-`$ dotrs --help`
+For an exhaustive list of available commands and their options, see the
+`--help` option.
 
 ### Workflow
 
@@ -46,9 +45,7 @@ Get informations about tracked files:
 
 ```
 $ dotrs list            // Check which files are currently tracked
-$ dotrs list --tree     // Show the files in a tree-like structure
 $ dotrs diff            // Similar to git diff
-$ dotrs diff --short    // Show file names only
 ```
 
 Retrive new changes:
