@@ -68,7 +68,7 @@ begin
   when :apply
     Commands.apply
   when :list
-    Commands.list(options[:tree])
+    Commands.list(tree: options[:tree])
   when :remove
     Commands.remove(ARGV[1..-1])
   when :pull
@@ -76,7 +76,7 @@ begin
   when :push
     Commands.push
   when :diff
-    Commands.diff(options[:short])
+    Commands.diff(short: options[:short])
   else
     abort("dotrs: unknown command '#{ARGV[0]}'.")
   end

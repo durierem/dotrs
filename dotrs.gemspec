@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
   spec.license     = 'MIT'
   spec.executables << 'dotrs'
 
-  spec.require_ruby_version = '2.7.0'
+  spec.required_ruby_version = '~> 2.7'
 
   spec.add_runtime_dependency 'git', '~> 1.7'
   spec.add_runtime_dependency 'tty-tree', '~> 0.4'
