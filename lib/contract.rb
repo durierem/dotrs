@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'assertion_error.rb'
+require_relative 'assertion_error'
 
 # Internal: Provide a way to check contracts.
 module Contract

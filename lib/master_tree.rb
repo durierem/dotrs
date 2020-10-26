@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'fileutils'
-require_relative 'contract.rb'
+require_relative 'contract'
 
 # Internal: A directory where each file is as a reference for a symbolic link.
 #
@@ -36,20 +36,22 @@ require_relative 'contract.rb'
 #   #                                  |-bar/
 #   #                                    |-file
 class MasterTree
-  # Internal: Initialize a new MasterTree whose root directory is the given
-  # empty directory.
+  # Internal: Initialize a new MasterTree at the given directory.
   #
-  # dir_name - The String root directory name for the new MasterTree. The
-  #            directory must already exist. This parameter must not be null.
+  # If the given directory for the root of the MasterTree doesn't exist, it is
+  # created.
+  #
+  # dir_name - The String root directory name for the new MasterTree. This
+  #            parameter must not be null.
   # max_depth - (optional) the String directory name for the maximum depth each
   #             file's path will be reproduced. The directory must already
-  #             exist. This paramater must not be null.
+  #             exist. This parameter must not be null.
   def initialize(dir_name, max_depth = '/')
-    Contract.check(!dir_name.nil? && Dir.exist?(dir_name),
-                   "invalid directory: #{dir_name}")
+    Contract.check(!dir_name.nil?, "invalid directory: #{dir_name}")
     Contract.check(!max_depth.nil? && Dir.exist?(max_depth),
                    "invalid maximum depth: #{max_depth}")
 
+    FileUtils.mkdir_p(dir_name) unless File.exist?(dir_name)
     @path = File.absolute_path(dir_name)
     @max_depth = max_depth
   end
@@ -168,8 +170,7 @@ class MasterTree
     raise 'No block given' unless block_given?
 
     Dir.glob("#{dir_name}/**/*", File::FNM_DOTMATCH).each do |file|
-      next if file == '.' || file == '..' || File.directory?(file) ||
-              file.include?('.git')
+      next if file == '.' || file == '..' || File.directory?(file)
 
       yield file
     end

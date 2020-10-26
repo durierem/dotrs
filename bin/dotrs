@@ -9,7 +9,7 @@ require_relative '../lib/config'
 # Set up the options
 options = { short: false, tree: false }
 optparse = OptionParser.new do |opts|
-  opts.banner = "Straightforward dotfiles management\n\n"                      \
+  opts.banner = "Straightforward dotfiles management.\n\n"                     \
                 "Usage: dotrs COMMAND [OPTION]\n"                              \
                 "       dotrs --help | --version\n\n"                          \
                 "Commands:\n"                                                  \
@@ -23,9 +23,9 @@ optparse = OptionParser.new do |opts|
                 "\tpush\t\t\tPush local changes\n"                             \
                 "\nOptions:\n"
   opts.on('-s', '--short', 'Use with diff, display file names only') do
-      options[:short] = true;
+    options[:short] = true
   end
-  opts.on('-t, --tree, ', 'Use with list, display files as a tree') do
+  opts.on('-t', '--tree', 'Use with list, display files as a tree') do
     options[:tree] = true
   end
   opts.on('--help', 'Display this help and exit') do
@@ -68,7 +68,7 @@ begin
   when :apply
     Commands.apply
   when :list
-    Commands.list
+    Commands.list(options[:tree])
   when :remove
     Commands.remove(ARGV[1..-1])
   when :pull

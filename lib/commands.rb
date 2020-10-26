@@ -2,16 +2,17 @@
 
 require 'socket'
 require 'git'
+require 'tty-tree'
 require_relative 'master_tree'
 require_relative 'config'
 
-# Internal: Methods for each of dotrs' commands.
+# Internal: Methods for each of dotrs commands.
 module Commands
   class << self
     include Config
 
     def add(files)
-      mt = MasterTree.new(REPO_PATH, Dir.home)
+      mt = MasterTree.new(MASTER_TREE_PATH, Dir.home)
       files.each do |file|
         begin
           mt.add(file)
@@ -22,7 +23,7 @@ module Commands
     end
 
     def apply
-      MasterTree.new(REPO_PATH, Dir.home).link_all
+      MasterTree.new(MASTER_TREE_PATH, Dir.home).link_all
     end
 
     def init(origin)
@@ -31,13 +32,17 @@ module Commands
       abort('dotrs: an error occured while cloning.')
     end
 
-    def list
-      mt = MasterTree.new(REPO_PATH, Dir.home)
-      mt.list.each { |file| puts(file) }
+    def list(tree: false)
+      if tree
+        puts(TTY::Tree.new(MASTER_TREE_PATH, show_hidden: true).render)
+      else
+        mt = MasterTree.new(MASTER_TREE_PATH, Dir.home)
+        mt.list.each { |file| puts(file) }
+      end
     end
 
     def remove(files)
-      mt = MasterTree.new(REPO_PATH, Dir.home)
+      mt = MasterTree.new(MASTER_TREE_PATH, Dir.home)
       files.each do |file|
         begin
           mt.remove(file)
@@ -64,7 +69,7 @@ module Commands
       end
     end
 
-    def diff(short = false)
+    def diff(short: false)
       Git.open(REPO_PATH).diff('HEAD').each do |file_diff|
         puts(file_diff.path)
         puts(file_diff.patch) unless short
@@ -72,11 +77,6 @@ module Commands
     end
 
     private
-
-    def index_empty?
-      status = Git.open(REPO_PATH).status
-      status.added.empty? && status.deleted.empty? && status.changed.empty? 
-    end
 
     def compute_commit_message
       msg = String.new("dotrs: push from '#{Socket.gethostname}'\n")
