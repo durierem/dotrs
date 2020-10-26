@@ -1,16 +1,16 @@
-# ![Image](https://img.tedomum.net/data/dotrs_logo_32-b1fd1b.png) dotrs
+# ![Image](https://img.tedomum.net/data/dotrs_logo_32-b1fd1b.png) Dotrs
 
 *Straightforward dotfiles management*
 
 ## What does dotrs do?
 
-dotrs uses a hidden git repository, placed in your `$HOME` folder to store
+Dotrs uses a hidden git repository, placed in your `$HOME` folder to store
 the dotfiles you want to keep synchronized. Then it creates links to them in
 your file system at the right location.
 
 ## Installation
 
-dotrs is installed as a Ruby gem. To install dotrs, use the following commands:
+Dotrs is installed as a Ruby gem. To install dotrs, use the following commands:
 
 ```
 $ git clone https://github.com/Sevodric/dotrs && cd dotrs
@@ -20,7 +20,7 @@ $ gem install dotrs
 
 ## Setup
 
-dotrs needs a remote repository for managing your dotfiles. Create an empty one
+Dotrs needs a remote repository for managing your dotfiles. Create an empty one
 on GitHub (or other) if you don't already have one. Afterward, use the following
 command to initialize dotrs:
 
@@ -28,29 +28,32 @@ command to initialize dotrs:
 
 ## Usage
 
-### Adding files and saving changes
+The following is an overview of the basic workflow with Dotrs.
+For an exhaustive list of available commands and their options, see
 
-Add a file to the source repository with the `add` command. This will cause
-dotrs to keep track of the file:
+`$ dotrs --help`
 
-`$ dotrs add ~/.bashrc`
+### Workflow
 
-Similarly, use `remove` to stop dotrs from tracking a file.
+Add files and save changes:
 
-Once files have been added or modified, save the changes with:
+```
+$ dotrs add ~/.bashrc   // Add ~/.bashrc to the local repository
+$ dotrs push            // Push local changes
+```
 
-`$ dotrs push`
+Get informations about tracked files:
 
-### Retrieving changes
+```
+$ dotrs list            // Check which files are currently tracked
+$ dotrs list --tree     // Show the files in a tree-like structure
+$ dotrs diff            // Similar to git diff
+$ dotrs diff --short    // Show file names only
+```
 
-Get the last changes from the remove:
+Retrive new changes:
 
-`$ dotrs pull`
-
-Link any new missing file with:
-
-`$ dotrs apply`
-
-### Checking for tracked files
-
-Use the `list` command to view all currently tracked files.
+```
+$ dotrs pull            // Pull last changes from the remote repository
+$ dotrs apply           // Link all tracked files to their location
+```
