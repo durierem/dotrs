@@ -61,7 +61,8 @@ module Commands
     def push
       repo = Git.open(REPO_PATH)
       begin
-        repo.commit_all(compute_commit_message)
+        repo.add(all: true)
+        repo.commit(compute_commit_message)
         repo.push
       rescue Git::GitExecuteError, Interrupt
         repo.reset('HEAD^')
@@ -80,36 +81,21 @@ module Commands
 
     def compute_commit_message
       msg = String.new("dotrs: push from '#{Socket.gethostname}'\n")
-      msg << added_files_message
-      msg << changed_files_message
-      msg << deleted_files_message
+      msg << compute_message(:added)
+      msg << compute_message(:changed)
+      msg << compute_message(:deleted)
       msg
     end
 
-    def added_files_message
-      return '' if Git.open(REPO_PATH).status.added.empty?
+    def compute_message(status_method)
+      return '' if Git.open(REPO_PATH).status.send(status_method).empty?
 
-      result = "\nFile(s) added:\n"
+      result = "\nFile(s) #{status_method}:\n"
       repo = Git.open(REPO_PATH)
-      repo.status.added.each_key { |file| result += "  #{file}\n" }
-      result
-    end
-
-    def changed_files_message
-      return '' if Git.open(REPO_PATH).status.changed.empty?
-
-      result = "\nFile(s) changed:\n"
-      repo = Git.open(REPO_PATH)
-      repo.status.changed.each_key { |file| result += "  #{file}\n" }
-      result
-    end
-
-    def deleted_files_message
-      return '' if Git.open(REPO_PATH).status.deleted.empty?
-
-      result = "\nFile(s) deleted:\n"
-      repo = Git.open(REPO_PATH)
-      repo.status.deleted.each_key { |file| result += "  #{file}\n" }
+      mt_dir = MASTER_TREE_PATH.delete_prefix("#{REPO_PATH}/")
+      repo.status.send(status_method).each_key do |file|
+        result += "\t#{file.delete_prefix("#{mt_dir}/")}\n"
+      end
       result
     end
   end
