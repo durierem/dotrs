@@ -20,9 +20,9 @@ class TestMasterTree < Test::Unit::TestCase
 
   def test_pre_new
     assert_raise(AssertionError) { MasterTree.new(nil) }
-    assert_raise(AssertionError) { MasterTree.new('invalid/directory') }
     assert_raise(AssertionError) { MasterTree.new(MT_DIR, nil) }
-    assert_raise(AssertionError) { MasterTree.new(MT_DIR, 'invalid/directory') }
+    MasterTree.new(MT_DIR)
+    assert(File.exist?(MT_DIR) && File.directory?(MT_DIR))
   end
 
   def test_new
