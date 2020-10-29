@@ -64,15 +64,12 @@ class MasterTree
   # example below).
   #
   # file_name - The String name of the file to add. The file must exist, must
-  #             not be a symbolic link, and must not already be in the
-  #             MasterTree. This parameter must not be null.
+  #             not be a symbolic link, must not be a directory and must not
+  #             already be in the MasterTree. This parameter must not be null.
   #
   # Returns nothing.
   def add(file_name)
-    Contract.check(!file_name.nil? && File.exist?(file_name) &&
-                   !File.symlink?(file_name) &&
-                   !File.absolute_path(file_name).include?(@path),
-                   "invalid file: #{file_name}")
+    Contract.check(check_pre_add(file_name), "invalid file: #{file_name}")
 
     mt_parent = File.dirname(virtual_path(file_name))
     FileUtils.mkdir_p(mt_parent) unless Dir.exist?(mt_parent)
@@ -130,6 +127,19 @@ class MasterTree
 
   private
 
+  # Internal: Check the precondition for add.
+  #
+  # file_name - The String file name to test.
+  #
+  # Returns a Boolean: true if file_name is a correct file, false otherwise.
+  def check_pre_add(file_name)
+    !file_name.nil? &&
+      File.exist?(file_name) &&
+      !File.directory?(file_name) &&
+      !File.symlink?(file_name) &&
+      !File.absolute_path(file_name).include?(@path)
+  end
+
   # Internal: Get the virtual path in the MasterTree corresponding to a real
   # path in the filesystem.
   #
@@ -151,6 +161,11 @@ class MasterTree
     File.join(@max_depth, virtual_path.delete_prefix("#{@path}/"))
   end
 
+  # Internal: Recursively remove all empty directories in a directory.
+  #
+  # dir_name - The String directory name in which to remove empty directories.
+  #
+  # Returns nothing.
   def remove_empty_dirs(dir_name)
     Dir.each_child(dir_name) do |entry|
       next unless File.directory?(entry)

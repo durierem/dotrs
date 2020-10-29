@@ -17,7 +17,9 @@ module Commands
         begin
           mt.add(file)
         rescue AssertionError
-          abort("dotrs: invalid file '#{file}'.")
+          abort("dotrs: invalid file '#{file}'")
+        rescue Errno::EACCES
+          abort('dotrs: insufficient permission')
         end
       end
     end
@@ -29,7 +31,7 @@ module Commands
     def init(origin)
       Git.clone(origin, REPO_PATH)
     rescue Git::GitExecuteError
-      abort('dotrs: an error occured while cloning.')
+      abort('dotrs: an error occured while cloning')
     end
 
     def list(tree: false)
@@ -47,7 +49,7 @@ module Commands
         begin
           mt.remove(file)
         rescue AssertionError
-          abort("dotrs: invalid file '#{file}'.")
+          abort("dotrs: invalid file '#{file}'")
         end
       end
     end
@@ -55,7 +57,7 @@ module Commands
     def pull
       Git.open(REPO_PATH).pull
     rescue Git::GitExecuteError
-      abort('dotrs: an error occured while pulling.')
+      abort('dotrs: an error occured while pulling')
     end
 
     def push
@@ -66,7 +68,7 @@ module Commands
         repo.push
       rescue Git::GitExecuteError, Interrupt
         repo.reset('HEAD^')
-        abort('dotrs: an error occured while pushing.')
+        abort('dotrs: an error occured while pushing')
       end
     end
 
