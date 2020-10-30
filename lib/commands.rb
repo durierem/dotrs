@@ -19,7 +19,7 @@ module Commands
         rescue AssertionError
           abort("dotrs: invalid file '#{file}'")
         rescue Errno::EACCES
-          abort('dotrs: insufficient permission')
+          abort("dotrs: insufficient permission for #{file}")
         end
       end
     end

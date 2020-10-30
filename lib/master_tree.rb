@@ -108,6 +108,8 @@ class MasterTree
   def list
     result = []
     each_child_rec(@path) do |file|
+      next if File.directory?(file)
+
       file_name = File.join(Dir.home, file.delete_prefix(@path))
       result << file_name
     end
@@ -119,6 +121,8 @@ class MasterTree
   # Returns nothing.
   def link_all
     each_child_rec(@path) do |file|
+      next if File.directory?(file)
+
       parent = File.dirname(real_path(file))
       FileUtils.mkdir_p(parent) unless Dir.exist?(parent)
       FileUtils.ln_s(file, real_path(file), force: true)
@@ -167,10 +171,10 @@ class MasterTree
   #
   # Returns nothing.
   def remove_empty_dirs(dir_name)
-    Dir.each_child(dir_name) do |entry|
+    each_child_rec(dir_name) do |entry|
       next unless File.directory?(entry)
 
-      remove_empty_dirs(entry)
+      FileUtils.rmdir(entry) if Dir.empty?(entry)
     end
   end
 
@@ -185,7 +189,7 @@ class MasterTree
     raise 'No block given' unless block_given?
 
     Dir.glob("#{dir_name}/**/*", File::FNM_DOTMATCH).each do |file|
-      next if file == '.' || file == '..' || File.directory?(file)
+      next if file == '.' || file == '..'
 
       yield file
     end
