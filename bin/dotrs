@@ -28,11 +28,11 @@ optparse = OptionParser.new do |opts|
   opts.on('-t', '--tree', 'Use with list, display files as a tree') do
     options[:tree] = true
   end
-  opts.on('--help', 'Display this help and exit') do
+  opts.on('-h', '--help', 'Display this help and exit') do
     puts opts
     exit(true)
   end
-  opts.on('--version', 'Display version number and exit') do
+  opts.on('-v', '--version', 'Display version number and exit') do
     puts "dotrs #{Dotrs::VERSION}"
     exit(true)
   end
