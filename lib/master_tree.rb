@@ -69,7 +69,7 @@ class MasterTree
   #
   # Returns nothing.
   def add(file_name)
-    Contract.check(check_pre_add(file_name), "invalid file: #{file_name}")
+    check_pre_add(file_name)
 
     mt_parent = File.dirname(virtual_path(file_name))
     FileUtils.mkdir_p(mt_parent) unless Dir.exist?(mt_parent)
@@ -91,11 +91,11 @@ class MasterTree
   #
   # Returns nothing.
   def remove(file_name)
-    Contract.check(!file_name.nil? &&
-                   File.symlink?(file_name) &&
+    Contract.check(!file_name.nil?, "#{file_name} is nil")
+    Contract.check(File.symlink?(file_name) &&
                    File.exist?(File.readlink(file_name)) &&
                    File.readlink(file_name).include?(@path),
-                   "invalid file: #{file_name}")
+                   "#{file_name} is not tracked yet")
 
     FileUtils.rm(file_name)
     FileUtils.mv(virtual_path(file_name), file_name)
@@ -131,17 +131,21 @@ class MasterTree
 
   private
 
-  # Internal: Check the precondition for add.
+  # Internal: Check the preconditions for add.
   #
   # file_name - The String file name to test.
   #
-  # Returns a Boolean: true if file_name is a correct file, false otherwise.
+  # Returns nothing.
   def check_pre_add(file_name)
-    !file_name.nil? &&
-      File.exist?(file_name) &&
-      !File.directory?(file_name) &&
-      !File.symlink?(file_name) &&
-      !File.absolute_path(file_name).include?(@path)
+    Contract.check(!file_name.nil?, "#{file_name} is nil")
+    Contract.check(File.exist?(file_name), "#{file_name} doesn't exist")
+    Contract.check(File.owned?(file_name),
+                   "insufficent permissions for #{file_name}")
+    Contract.check(!File.directory?(file_name), "#{file_name} is a directory")
+    Contract.check(!File.absolute_path(file_name).include?(@path) &&
+                   !File.absolute_path(virtual_path(file_name)).include?(@path),
+                   "#{file_name} is already tracked")
+    Contract.check(!File.symlink?(file_name), "#{file_name} is a symbolic link")
   end
 
   # Internal: Get the virtual path in the MasterTree corresponding to a real
