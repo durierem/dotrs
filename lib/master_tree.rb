@@ -188,8 +188,9 @@ class MasterTree
   def each_child_rec(dir_name)
     raise 'No block given' unless block_given?
 
+    invalid = ['.', '..']
     Dir.glob("#{dir_name}/**/*", File::FNM_DOTMATCH).each do |file|
-      next if file == '.' || file == '..'
+      next if invalid.include?(file)
 
       yield file
     end
