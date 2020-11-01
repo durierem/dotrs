@@ -83,6 +83,8 @@ module Commands
         puts(file_diff.path)
         puts(file_diff.patch) unless short
       end
+    rescue Git::GitExecuteError => e
+      abort("dotrs: #{e}")
     end
 
     private
