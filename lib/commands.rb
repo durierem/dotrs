@@ -25,7 +25,10 @@ module Commands
     end
 
     def init(origin)
-      Git.clone(origin, REPO_PATH)
+      m = %r{/(?<repo>[\w.@:\-~]+)(?:.git)?\z}.match(origin)
+      repo_name = m[:repo].delete_prefix('git')
+      Git.clone(origin, File.join(Dir.home, repo_name))
+      Config.change_repo_name(repo_name)
     rescue Git::GitExecuteError => e
       abort("dotrs: #{e}")
     end

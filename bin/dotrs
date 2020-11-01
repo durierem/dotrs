@@ -53,6 +53,7 @@ command = ARGV[0].to_sym
 
 # Handle the init command
 if command == :init
+  abort('dotrs: missing argument for `init`') if ARGV[1].nil?
   Commands.init(ARGV[1])
   exit(true)
 end
