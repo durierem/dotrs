@@ -105,7 +105,7 @@ class MasterTree
 
   # Internal: Get a list of all files in the MasterTree
   #
-  # Returns an Array the true String paths of all the files in the MasterTree.
+  # Returns an Array of the true String paths of the files in the MasterTree.
   def list
     result = []
     each_child_rec(@path) do |file|
@@ -128,6 +128,13 @@ class MasterTree
       FileUtils.mkdir_p(parent) unless Dir.exist?(parent)
       FileUtils.ln_s(file, real_path(file), force: true)
     end
+  end
+
+  # Internal: Check if the MasterTree is empty.
+  #
+  # Returns true if the MasterTree is empty, false otherwise.
+  def empty?
+    Dir.empty?(@path)
   end
 
   private

@@ -29,18 +29,24 @@ module Commands
       repo_name = m[:repo].delete_prefix('git')
       Git.clone(origin, File.join(Dir.home, repo_name))
       Config.change_repo_name(repo_name)
+
+      # Create the src/ directory in the MasterTree to avoid missing directory
+      # in future commands
+      MasterTree.new(MASTER_TREE_PATH, Dir.home)
     rescue Git::GitExecuteError => e
       abort("dotrs: #{e}")
     end
 
     def list(tree: false)
+      mt = MasterTree.new(MASTER_TREE_PATH, Dir.home)
+      return if mt.empty?
+
       if tree
         str = TTY::Tree.new(MASTER_TREE_PATH, show_hidden: true).render
         str.delete_prefix!(File.basename(MASTER_TREE_PATH))
         str = "#{Dir.home}#{str}"
         puts(str)
       else
-        mt = MasterTree.new(MASTER_TREE_PATH, Dir.home)
         mt.list.each { |file| puts(file) }
       end
     end
@@ -48,7 +54,7 @@ module Commands
     def remove(files)
       mt = MasterTree.new(MASTER_TREE_PATH, Dir.home)
       files.each do |file|
-        mt.remove(file)
+        mt.remove(file) 
       rescue AssertionError => e
         abort("dotrs: #{e}")
       end
