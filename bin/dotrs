@@ -6,6 +6,8 @@ require_relative '../lib/version'
 require_relative '../lib/commands'
 require_relative '../lib/config'
 
+Config.load
+
 # Set up the options
 options = { short: false, tree: false }
 optparse = OptionParser.new do |opts|
@@ -59,7 +61,7 @@ if command == :init
 end
 
 # Exit if REPO_PATH doesn't exist
-abort('dotrs: not initialized') unless Dir.exist?(Config::REPO_PATH)
+abort('dotrs: not initialized') unless Dir.exist?(Config.repo_path)
 
 # Handle other commands
 begin
