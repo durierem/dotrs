@@ -14,11 +14,9 @@ module Commands
     def add(files)
       mt = MasterTree.new(MASTER_TREE_PATH, Dir.home)
       files.each do |file|
-        begin
-          mt.add(file)
-        rescue AssertionError => e
-          abort("dotrs: #{e}")
-        end
+        mt.add(file)
+      rescue AssertionError => e
+        abort("dotrs: #{e}")
       end
     end
 
@@ -44,11 +42,9 @@ module Commands
     def remove(files)
       mt = MasterTree.new(MASTER_TREE_PATH, Dir.home)
       files.each do |file|
-        begin
-          mt.remove(file)
-        rescue AssertionError => e
-          abort("dotrs: #{e}")
-        end
+        mt.remove(file)
+      rescue AssertionError => e
+        abort("dotrs: #{e}")
       end
     end
 
@@ -92,7 +88,7 @@ module Commands
 
       result = "\nFile(s) #{status_method}:\n"
       repo = Git.open(REPO_PATH)
-      mt_dir = MASTER_TREE_PATH.delete_prefix("#{REPO_PATH}/")
+      mt_dir = File.basename(MASTER_TREE_PATH)
       repo.status.send(status_method).each_key do |file|
         result += "\t#{file.delete_prefix("#{mt_dir}/")}\n"
       end
