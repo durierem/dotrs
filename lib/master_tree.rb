@@ -69,6 +69,7 @@ class MasterTree
   #
   # Returns nothing.
   def add(file_name)
+    Contract.check(!file_name.nil?, "#{file_name} is nil")
     check_pre_add(file_name)
 
     mt_parent = File.dirname(virtual_path(file_name))
@@ -137,7 +138,6 @@ class MasterTree
   #
   # Returns nothing.
   def check_pre_add(file_name)
-    Contract.check(!file_name.nil?, "#{file_name} is nil")
     Contract.check(File.exist?(file_name), "#{file_name} doesn't exist")
     Contract.check(File.owned?(file_name),
                    "insufficent permissions for #{file_name}")
