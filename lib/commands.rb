@@ -32,7 +32,10 @@ module Commands
 
     def list(tree: false)
       if tree
-        puts(TTY::Tree.new(MASTER_TREE_PATH, show_hidden: true).render)
+        str = TTY::Tree.new(MASTER_TREE_PATH, show_hidden: true).render
+        str.delete_prefix!(File.basename(MASTER_TREE_PATH))
+        str = "#{Dir.home}#{str}"
+        puts(str)
       else
         mt = MasterTree.new(MASTER_TREE_PATH, Dir.home)
         mt.list.each { |file| puts(file) }
