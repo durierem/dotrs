@@ -150,7 +150,7 @@ class MasterTree
                    "insufficent permissions for #{file_name}")
     Contract.check(!File.directory?(file_name), "#{file_name} is a directory")
     Contract.check(!File.absolute_path(file_name).include?(@path) &&
-                   !File.absolute_path(virtual_path(file_name)).include?(@path),
+                   !File.exist?(File.absolute_path(virtual_path(file_name))),
                    "#{file_name} is already tracked")
     Contract.check(!File.symlink?(file_name), "#{file_name} is a symbolic link")
   end
