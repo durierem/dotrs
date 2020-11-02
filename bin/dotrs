@@ -12,8 +12,12 @@ Config.load
 options = { short: false, tree: false }
 optparse = OptionParser.new do |opts|
   opts.banner = "Straightforward dotfiles management.\n\n"                     \
-                "Usage: dotrs COMMAND [OPTION]\n"                              \
-                "       dotrs --help | --version\n\n"                          \
+                "Usage: dotrs init REMOTE\n"                                   \
+                "   or: dotrs add | remove FILE...\n"                          \
+                "   or: dotrs list [-t | --tree]\n"                            \
+                "   or: dotrs diff [-s | --short]\n"                           \
+                "   or: dotrs pull | push\n"                                   \
+                "   or: dotrs --version | --help\n\n"                          \
                 "Commands:\n"                                                  \
                 "\tadd FILE...\t\tAdd FILE to the tracked files\n"             \
                 "\tapply\t\t\tLink all tracked files to their real location\n" \
@@ -30,11 +34,11 @@ optparse = OptionParser.new do |opts|
   opts.on('-t', '--tree', 'Use with list, display files as a tree') do
     options[:tree] = true
   end
-  opts.on('-h', '--help', 'Display this help and exit') do
+  opts.on('--help', 'Display this help and exit') do
     puts opts
     exit(true)
   end
-  opts.on('-v', '--version', 'Display version number and exit') do
+  opts.on('--version', 'Display version number and exit') do
     puts "dotrs #{Dotrs::VERSION}"
     exit(true)
   end
@@ -44,11 +48,11 @@ end
 begin
   optparse.parse!
 rescue OptionParser::InvalidOption
-  abort('dotrs: invalid option.')
+  abort('dotrs: invalid option')
 end
 
 # Check if a command has been given
-abort('dotrs: no command given.') if ARGV.empty?
+abort('dotrs: no command given') if ARGV.empty?
 
 # Get the command given by the user
 command = ARGV[0].to_sym
@@ -67,13 +71,13 @@ abort('dotrs: not initialized') unless Dir.exist?(Config.repo_path)
 begin
   case command
   when :add
-    Commands.add(ARGV[1..-1])
+    Commands.add(ARGV[1..])
   when :apply
     Commands.apply
   when :list
     Commands.list(tree: options[:tree])
   when :remove
-    Commands.remove(ARGV[1..-1])
+    Commands.remove(ARGV[1..])
   when :pull
     Commands.pull
   when :push
@@ -81,7 +85,7 @@ begin
   when :diff
     Commands.diff(short: options[:short])
   else
-    abort("dotrs: unknown command '#{ARGV[0]}'.")
+    abort("dotrs: unknown command `#{ARGV[0]}`")
   end
 rescue Interrupt
   abort("\ndotrs: interrupted!")
