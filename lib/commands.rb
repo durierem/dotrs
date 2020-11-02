@@ -71,9 +71,9 @@ module Commands
       begin
         repo.add(all: true)
         repo.commit(compute_commit_message)
-        repo.push
+        repo.push('origin', repo.current_branch)
       rescue Git::GitExecuteError => e
-        repo.reset('HEAD^') unless Git::GitExecuteError
+        repo.reset('HEAD^') unless empty_repo?(Config.repo_path)
         abort("dotrs: #{e}")
       end
     end
@@ -89,7 +89,13 @@ module Commands
 
     private
 
+    def empty_repo?(repo_path)
+      Dir.empty?(File.join(repo_path, '.git', 'refs', 'heads'))
+    end
+
     def compute_commit_message
+      return 'dotrs: first commit' if empty_repo?(Config.repo_path)
+
       msg = String.new("dotrs: push from '#{Socket.gethostname}'\n")
       msg << compute_message(:added)
       msg << compute_message(:changed)
@@ -100,11 +106,10 @@ module Commands
     def compute_message(status_method)
       return '' if Git.open(Config.repo_path).status.send(status_method).empty?
 
-      result = "\nFile(s) #{status_method}:\n"
+      result = "\n#{status_method.capitalize}:\n"
       repo = Git.open(Config.repo_path)
-      mt_dir = File.basename(Config.master_tree_path)
       repo.status.send(status_method).each_key do |file|
-        result += "\t#{file.delete_prefix("#{mt_dir}/")}\n"
+        result += "\t#{File.basename(file)}\n"
       end
       result
     end
