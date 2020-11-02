@@ -13,7 +13,7 @@ options = { short: false, tree: false }
 optparse = OptionParser.new do |opts|
   opts.banner = "Straightforward dotfiles management.\n\n"                     \
                 "Usage: dotrs init REMOTE\n"                                   \
-                "   or: dotrs add | remove FILE...\n"                          \
+                "   or: dotrs add | remove [--all] FILE...\n"                  \
                 "   or: dotrs list [-t | --tree]\n"                            \
                 "   or: dotrs diff [-s | --short]\n"                           \
                 "   or: dotrs pull | push\n"                                   \
@@ -28,6 +28,10 @@ optparse = OptionParser.new do |opts|
                 "\tpull\t\t\tPull the latest changes\n"                        \
                 "\tpush\t\t\tPush local changes\n"                             \
                 "\nOptions:\n"
+
+  opts.on('--all', 'Remove all tracked files') do
+    options[:remove_all] = true
+  end
   opts.on('-s', '--short', 'Use with diff, display file names only') do
     options[:short] = true
   end
@@ -77,7 +81,11 @@ begin
   when :list
     Commands.list(tree: options[:tree])
   when :remove
-    Commands.remove(ARGV[1..])
+    if options[:remove_all]
+      Commands.remove_all
+    else
+      Commands.remove(ARGV[1..])
+    end
   when :pull
     Commands.pull
   when :push

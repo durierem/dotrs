@@ -60,6 +60,15 @@ module Commands
       end
     end
 
+    def remove_all
+      mt = MasterTree.new(Config.master_tree_path, Dir.home)
+      mt.list.each do |file|
+        mt.remove(file)
+      rescue AssertionError => e
+        abort("dotrs: #{e}")
+      end
+    end
+
     def pull
       Git.open(Config.repo_path).pull
     rescue Git::GitExecuteError => e
