@@ -11,10 +11,11 @@ module Commands
   class << self
     Config.load
 
-    def add(files)
+    def add(files, verbose: false)
       mt = MasterTree.new(Config.master_tree_path, Dir.home)
       files.each do |file|
         mt.add(file)
+        puts("#{file} added to tracked files") if verbose
       rescue AssertionError => e
         abort("dotrs: #{e}")
       end
@@ -51,19 +52,21 @@ module Commands
       end
     end
 
-    def remove(files)
+    def remove(files, verbose: false)
       mt = MasterTree.new(Config.master_tree_path, Dir.home)
       files.each do |file|
         mt.remove(file)
+        puts("#{file} removed from tracked files") if verbose
       rescue AssertionError => e
         abort("dotrs: #{e}")
       end
     end
 
-    def remove_all
+    def remove_all(verbose: false)
       mt = MasterTree.new(Config.master_tree_path, Dir.home)
       mt.list.each do |file|
         mt.remove(file)
+        puts("#{file} removed from tracked files") if verbose
       rescue AssertionError => e
         abort("dotrs: #{e}")
       end

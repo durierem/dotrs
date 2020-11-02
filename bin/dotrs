@@ -13,7 +13,7 @@ options = { short: false, tree: false }
 optparse = OptionParser.new do |opts|
   opts.banner = "Straightforward dotfiles management.\n\n"                     \
                 "Usage: dotrs init REMOTE\n"                                   \
-                "   or: dotrs add | remove [--all] FILE...\n"                  \
+                "   or: dotrs add | remove [--all] [-v | --verbose] FILE...\n" \
                 "   or: dotrs list [-t | --tree]\n"                            \
                 "   or: dotrs diff [-s | --short]\n"                           \
                 "   or: dotrs pull | push\n"                                   \
@@ -37,6 +37,9 @@ optparse = OptionParser.new do |opts|
   end
   opts.on('-t', '--tree', 'Use with list, display files as a tree') do
     options[:tree] = true
+  end
+  opts.on('-v', '--verbose', 'Display what is being done') do
+    options[:verbose] = true
   end
   opts.on('--help', 'Display this help and exit') do
     puts opts
@@ -75,16 +78,16 @@ abort('dotrs: not initialized') unless Dir.exist?(Config.repo_path)
 begin
   case command
   when :add
-    Commands.add(ARGV[1..])
+    Commands.add(ARGV[1..], verbose: options[:verbose])
   when :apply
     Commands.apply
   when :list
     Commands.list(tree: options[:tree])
   when :remove
     if options[:remove_all]
-      Commands.remove_all
+      Commands.remove_all(verbose: options[:verbose])
     else
-      Commands.remove(ARGV[1..])
+      Commands.remove(ARGV[1..], verbose: options[:verbose])
     end
   when :pull
     Commands.pull
