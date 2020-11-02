@@ -201,7 +201,7 @@ class MasterTree
 
     invalid = ['.', '..']
     Dir.glob("#{dir_name}/**/*", File::FNM_DOTMATCH).each do |file|
-      next if invalid.include?(file)
+      next if invalid.include?(File.basename(file))
 
       yield file
     end
