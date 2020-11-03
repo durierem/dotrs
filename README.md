@@ -2,6 +2,10 @@
 
 *Straightforward dotfiles management*
 
+![GitHub](https://img.shields.io/github/license/Sevodric/dotrs?style=flat-square)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/Sevodric/dotrs?style=flat-square)
+[![Inline docs](http://inch-ci.org/github/Sevodric/dotrs.svg?branch=master&style=flat-square)](http://inch-ci.org/github/Sevodric/dotrs)
+
 ## What does dotrs do?
 
 Dotrs uses a hidden git repository, placed in your `$HOME` folder to store
