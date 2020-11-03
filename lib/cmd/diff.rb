@@ -3,7 +3,9 @@
 require 'git'
 require_relative '../config'
 
-# Internal: Diff command
+# Internal: Execute 'git diff' in the local repository.
+#
+# If the option --short is defined, only the file names are displayed.
 class Diff
   include Config
 

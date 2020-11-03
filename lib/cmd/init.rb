@@ -4,18 +4,26 @@ require 'git'
 require_relative '../config'
 require_relative '../master_tree'
 
-# Internal: Init command
+# Internal: Clone a remote repository into the user's home directory.
 class Init
   include Config
 
-  def initialize(origin)
-    @origin = origin
+  # Internal: Initialize the Init command.
+  #
+  # remote - The String URL of the remote repository to clone.
+  def initialize(remote)
+    @remote = remote
   end
 
   def perform
-    m = %r{/(?<repo>[\w.@:\-~]+)(?:.git)?\z}.match(@origin)
+    # Match the repository name in the remote URL
+    m = %r{/(?<repo>[\w.@:\-~]+)(?:.git)?\z}.match(@remote)
     repo_name = m[:repo].delete_prefix('git')
-    Git.clone(@origin, File.join(Dir.home, repo_name))
+
+    # Clone the remote
+    Git.clone(@remote, File.join(Dir.home, repo_name))
+
+    # Update the configuration file with the newly cloned repository name
     Config.change_repo_name(repo_name)
 
     # Create the src/ directory in the MasterTree to avoid missing directory

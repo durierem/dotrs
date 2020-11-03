@@ -3,11 +3,14 @@
 require_relative '../config'
 require_relative '../master_tree'
 
-# Internal: Add command
+# Internal: Add the given files in the local repository.
 class Add
   include Config
 
-  def initialize(files)
+  # Internal: Initialize the Add command.
+  #
+  # files - The String file names to add in the local repository.
+  def initialize(*files)
     @mt = MasterTree.new(Config.master_tree_path, Dir.home)
     @files = files
   end

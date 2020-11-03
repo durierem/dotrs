@@ -9,7 +9,7 @@ require_relative 'cmd/pull'
 require_relative 'cmd/push'
 require_relative 'cmd/remove'
 
-# Internal: Methods for each of dotrs commands.
+# Internal: Provide an interface to each of the commands classes.
 module Commands
   Add = ::Add
   Apply = ::Apply

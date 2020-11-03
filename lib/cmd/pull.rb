@@ -3,7 +3,7 @@
 require 'git'
 require_relative '../config'
 
-# Internal: Pull command
+# Internal: Pull the remote repository.
 class Pull
   include Config
 

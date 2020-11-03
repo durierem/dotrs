@@ -4,7 +4,15 @@ require 'toml-rb'
 
 CONFIG_FILE_PATH = File.join(Dir.home, '.config', 'dotrs', 'config.toml')
 
-# Internal: Configuration and options.
+# Internal: Provide a centralized configuration.
+#
+# This modules allows to read and write the configuration file and serves as a
+# centralized way to retrieve user defined options surch as --verbose.
+#
+# The configuration file can be loaded with load_config_file.
+#
+# User defined options are accessible as the option attribute. It is initially
+# empty and must be set externally.
 module Config
   class << self
     attr_reader :repo_path, :master_tree_path

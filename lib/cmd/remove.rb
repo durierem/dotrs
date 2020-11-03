@@ -3,11 +3,17 @@
 require_relative '../config'
 require_relative '../master_tree'
 
-# Internal: Remove command
+# Internal: Remove the given files from the local repository.
+#
+# If the --all option is defined, the Remove command removes every tracked files
+# from the local repository.
 class Remove
   include Config
 
-  def initialize(files)
+  # Internal: Initialize the Remove command.
+  #
+  # files - The String file names to remove from the local repository.
+  def initialize(*files)
     @mt = MasterTree.new(Config.master_tree_path, Dir.home)
     @files = Config.options[:remove_all] ? @mt.list : files
   end

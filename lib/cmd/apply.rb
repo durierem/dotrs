@@ -3,7 +3,7 @@
 require_relative '../config'
 require_relative '../master_tree'
 
-# Internal: Apply command
+# Internal: Link all the files in the local repository.
 class Apply
   include Config
 
