@@ -9,15 +9,10 @@ require_relative '../lib/config'
 Config.load
 
 # Set up the options
-options = { short: false, tree: false }
+options = {}
 optparse = OptionParser.new do |opts|
   opts.banner = "Straightforward dotfiles management.\n\n"                     \
-                "Usage: dotrs init REMOTE\n"                                   \
-                "   or: dotrs add | remove [--all] [-v | --verbose] FILE...\n" \
-                "   or: dotrs list [-t | --tree]\n"                            \
-                "   or: dotrs diff [-s | --short]\n"                           \
-                "   or: dotrs pull | push\n"                                   \
-                "   or: dotrs --version | --help\n\n"                          \
+                "Usage: dotrs [OPTION]... COMMAND\n\n"                         \
                 "Commands:\n"                                                  \
                 "\tadd FILE...\t\tAdd FILE to the tracked files\n"             \
                 "\tapply\t\t\tLink all tracked files to their real location\n" \
@@ -29,13 +24,13 @@ optparse = OptionParser.new do |opts|
                 "\tpush\t\t\tPush local changes\n"                             \
                 "\nOptions:\n"
 
-  opts.on('--all', 'Remove all tracked files') do
+  opts.on('--all', 'Use with remove; remove all tracked files') do
     options[:remove_all] = true
   end
-  opts.on('-s', '--short', 'Use with diff, display file names only') do
+  opts.on('-s', '--short', 'Use with diff; display file names only') do
     options[:short] = true
   end
-  opts.on('-t', '--tree', 'Use with list, display files as a tree') do
+  opts.on('-t', '--tree', 'Use with list; display files as a tree') do
     options[:tree] = true
   end
   opts.on('-v', '--verbose', 'Display what is being done') do
