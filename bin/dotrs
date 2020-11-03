@@ -80,7 +80,7 @@ begin
   when :add
     Commands.add(ARGV[1..], verbose: options[:verbose])
   when :apply
-    Commands.apply
+    Commands.apply(verbose: options[:verbose])
   when :list
     Commands.list(tree: options[:tree])
   when :remove

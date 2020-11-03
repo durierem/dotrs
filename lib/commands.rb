@@ -21,8 +21,14 @@ module Commands
       end
     end
 
-    def apply
-      MasterTree.new(Config.master_tree_path, Dir.home).link_all
+    def apply(verbose: false)
+      mt = MasterTree.new(Config.master_tree_path, Dir.home)
+      mt.link_all
+      return unless verbose
+
+      mt.list.each do |file|
+        puts("'#{file}' -> '#{File.join(Config.master_tree_path, file)}'")
+      end
     end
 
     def init(origin)
