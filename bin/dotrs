@@ -6,8 +6,6 @@ require_relative '../lib/version'
 require_relative '../lib/commands'
 require_relative '../lib/config'
 
-Config.load
-
 # Set up the options
 options = {}
 optparse = OptionParser.new do |opts|
@@ -49,9 +47,13 @@ end
 # Parse and check for invalid options
 begin
   optparse.parse!
-rescue OptionParser::InvalidOption
-  abort('dotrs: invalid option')
+rescue OptionParser::AmbiguousOption, OptionParser::InvalidOption => e
+  abort("dotrs: #{e}")
 end
+
+# Load the configuration file and set the options
+Config.load_config_file
+Config.options = options
 
 # Check if a command has been given
 abort('dotrs: no command given') if ARGV.empty?
@@ -62,7 +64,7 @@ command = ARGV[0].to_sym
 # Handle the init command
 if command == :init
   abort('dotrs: missing argument for `init`') if ARGV[1].nil?
-  Commands.init(ARGV[1])
+  Commands::Init.new(ARGV[1]).perform
   exit(true)
 end
 
@@ -73,23 +75,19 @@ abort('dotrs: not initialized') unless Dir.exist?(Config.repo_path)
 begin
   case command
   when :add
-    Commands.add(ARGV[1..], verbose: options[:verbose])
+    Commands::Add.new(ARGV[1..]).perform
   when :apply
-    Commands.apply(verbose: options[:verbose])
+    Commands::Apply.new.perform
   when :list
-    Commands.list(tree: options[:tree])
+    Commands::List.new.perform
   when :remove
-    if options[:remove_all]
-      Commands.remove_all(verbose: options[:verbose])
-    else
-      Commands.remove(ARGV[1..], verbose: options[:verbose])
-    end
+    Commands::Remove.new(ARGV[1..]).perform
   when :pull
-    Commands.pull
+    Commands::Pull.new.perform
   when :push
-    Commands.push
+    Commands::Push.new.perform
   when :diff
-    Commands.diff(short: options[:short])
+    Commands::Diff.new.perform
   else
     abort("dotrs: unknown command `#{ARGV[0]}`")
   end

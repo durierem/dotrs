@@ -36,6 +36,8 @@ require_relative 'contract'
 #   #                                  |-bar/
 #   #                                    |-file
 class MasterTree
+  attr_reader :path, :max_depth
+
   # Internal: Initialize a new MasterTree at the given directory.
   #
   # If the given directory for the root of the MasterTree doesn't exist, it is
