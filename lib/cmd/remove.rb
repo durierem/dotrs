@@ -15,7 +15,7 @@ class Remove
   # files - The String file names to remove from the local repository.
   def initialize(*files)
     @mt = MasterTree.new(Config.master_tree_path, Dir.home)
-    @files = Config.options[:remove_all] ? @mt.list : files
+    @files = Config.options[:remove_all] ? @mt.list : files.flatten
   end
 
   def perform

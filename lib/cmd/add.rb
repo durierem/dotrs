@@ -12,7 +12,7 @@ class Add
   # files - The String file names to add in the local repository.
   def initialize(*files)
     @mt = MasterTree.new(Config.master_tree_path, Dir.home)
-    @files = files
+    @files = files.flatten
   end
 
   def perform
