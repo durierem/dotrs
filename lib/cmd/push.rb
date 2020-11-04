@@ -71,7 +71,7 @@ class Push
     result = "\n#{status_method.capitalize}:\n"
     repo = Git.open(Config.repo_path)
     repo.status.send(status_method).each_key do |file|
-      result += "\t#{File.basename(file)}\n"
+      result += "\t#{file.delete_prefix('src/')}\n"
     end
     result
   end
