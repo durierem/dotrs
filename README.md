@@ -2,9 +2,9 @@
 
 *Straightforward dotfiles management*
 
-![GitHub](https://img.shields.io/github/license/Sevodric/dotrs?style=flat-square)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/Sevodric/dotrs?style=flat-square)
-[![Inline docs](http://inch-ci.org/github/Sevodric/dotrs.svg?branch=master&style=flat-square)](http://inch-ci.org/github/Sevodric/dotrs)
+![GitHub](https://img.shields.io/github/license/durierem/dotrs?style=flat-square)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/durierem/dotrs?style=flat-square)
+[![Inline docs](http://inch-ci.org/github/durierem/dotrs.svg?branch=master&style=flat-square)](http://inch-ci.org/github/durierem/dotrs)
 
 ## What does dotrs do?
 
