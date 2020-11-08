@@ -8,7 +8,7 @@
 
 ## What does dotrs do?
 
-Dotrs uses a hidden git repository, placed in your `$HOME` folder to store
+Dotrs uses a hidden git repository, placed in your `$HOME` directory to store
 the dotfiles you want to keep synchronized. Then it creates links to them in
 your file system at the right location.
 
@@ -26,7 +26,7 @@ $ gem install dotrs
 
 Dotrs needs a remote repository for managing your dotfiles. Create an empty one
 on GitHub (or other) if you don't already have one. Afterward, use the following
-command to initialize dotrs:
+command to initialize Dotrs:
 
 `$ dotrs init REMOTE-URL`
 
@@ -52,7 +52,7 @@ $ dotrs list            // Check which files are currently tracked
 $ dotrs diff            // Similar to git diff
 ```
 
-Retrive new changes:
+Retrieve new changes:
 
 ```
 $ dotrs pull            // Pull last changes from the remote repository
