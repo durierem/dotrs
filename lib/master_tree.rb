@@ -139,24 +139,6 @@ class MasterTree
     Dir.empty?(@path)
   end
 
-  private
-
-  # Internal: Check the preconditions for add.
-  #
-  # file_name - The String file name to test.
-  #
-  # Returns nothing.
-  def check_pre_add(file_name)
-    Contract.check(File.exist?(file_name), "#{file_name} doesn't exist")
-    Contract.check(File.owned?(file_name),
-                   "insufficent permissions for #{file_name}")
-    Contract.check(!File.directory?(file_name), "#{file_name} is a directory")
-    Contract.check(!File.absolute_path(file_name).include?(@path) &&
-                   !File.exist?(File.absolute_path(virtual_path(file_name))),
-                   "#{file_name} is already tracked")
-    Contract.check(!File.symlink?(file_name), "#{file_name} is a symbolic link")
-  end
-
   # Internal: Get the virtual path in the MasterTree corresponding to a real
   # path in the filesystem.
   #
@@ -176,6 +158,24 @@ class MasterTree
   # Returns the String true path.
   def real_path(virtual_path)
     File.join(@max_depth, virtual_path.delete_prefix("#{@path}/"))
+  end
+
+  private
+
+  # Internal: Check the preconditions for add.
+  #
+  # file_name - The String file name to test.
+  #
+  # Returns nothing.
+  def check_pre_add(file_name)
+    Contract.check(File.exist?(file_name), "#{file_name} doesn't exist")
+    Contract.check(File.owned?(file_name),
+                   "insufficent permissions for #{file_name}")
+    Contract.check(!File.directory?(file_name), "#{file_name} is a directory")
+    Contract.check(!File.absolute_path(file_name).include?(@path) &&
+                   !File.exist?(File.absolute_path(virtual_path(file_name))),
+                   "#{file_name} is already tracked")
+    Contract.check(!File.symlink?(file_name), "#{file_name} is a symbolic link")
   end
 
   # Internal: Recursively remove all empty directories in a directory.
