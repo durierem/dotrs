@@ -59,11 +59,10 @@ class List
   # Internal: Display each file's full path, one by one.
   def list_regular
     @mt.list.each do |file|
-      if @diff_files.include?(@mt.virtual_path(file))
-        puts("#{file} (*)")
-      else
-        puts(file)
+      @diff_files.each do |diff|
+        file.replace("#{file} (*)") if file.include?(diff)
       end
+      puts(file)
     end
   end
 end
