@@ -1,5 +1,7 @@
 AllCops:
   TargetRubyVersion: 2.7
+  Exclude:
+    - test/*.rb
 
 Metrics/AbcSize:
   Max: 20
