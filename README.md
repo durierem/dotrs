@@ -2,13 +2,13 @@
 
 *Straightforward dotfiles management*
 
-![GitHub](https://img.shields.io/github/license/Sevodric/dotrs?style=flat-square)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/Sevodric/dotrs?style=flat-square)
-[![Inline docs](http://inch-ci.org/github/Sevodric/dotrs.svg?branch=master&style=flat-square)](http://inch-ci.org/github/Sevodric/dotrs)
+![GitHub](https://img.shields.io/github/license/durierem/dotrs?style=flat-square)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/durierem/dotrs?style=flat-square)
+[![Inline docs](http://inch-ci.org/github/durierem/dotrs.svg?branch=master&style=flat-square)](http://inch-ci.org/github/durierem/dotrs)
 
 ## What does dotrs do?
 
-Dotrs uses a hidden git repository, placed in your `$HOME` folder to store
+Dotrs uses a hidden git repository, placed in your `$HOME` directory to store
 the dotfiles you want to keep synchronized. Then it creates links to them in
 your file system at the right location.
 
@@ -26,7 +26,7 @@ $ gem install dotrs
 
 Dotrs needs a remote repository for managing your dotfiles. Create an empty one
 on GitHub (or other) if you don't already have one. Afterward, use the following
-command to initialize dotrs:
+command to initialize Dotrs:
 
 `$ dotrs init REMOTE-URL`
 
@@ -52,7 +52,7 @@ $ dotrs list            // Check which files are currently tracked
 $ dotrs diff            // Similar to git diff
 ```
 
-Retrive new changes:
+Retrieve new changes:
 
 ```
 $ dotrs pull            // Pull last changes from the remote repository
