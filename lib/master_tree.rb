@@ -6,20 +6,21 @@ require_relative 'contract'
 # Internal: A directory where each file is as a reference for a symbolic link.
 #
 # Adding a file to a MasterTree moves the said file under the MasterTree's root
-# directory and creates a symbolic link at the file's original location,
+# directory and creates a symbolic link at the file's original location
 # pointing to the file's new location.
 #
 # If a file's original path is "/foo/bar/file" the new path of the same file,
 # after being added to a MasterTree is "mastertree_root_directory/foo/bar/file".
 #
 # By default, the depth of path's reproduction is the root '/' directory; which
-# means that the full path to the file is recreated in the MasterTree. One can
-# specify the depth of path when creating a new MasterTree. The path of an added
-# file will be reproduced only until the given directory is reached.
+# means that the full path to the file is recreated in the MasterTree. The depth
+# of path's reproduction can be specified as an optional argument when creating
+# a MasterTree. The path of an added file will be recreated only until the given
+# directory is reached.
 #
-# In the following documentation, the terms "real" and "virtual" will be used
-# to describe, respectively, the original path of a file, and its path once
-# added in a MasterTree.
+# The terms "real path" and "virtual path" will be used to describe,
+# respectively, the original path of a file, and its new path once added in a
+# MasterTree.
 #
 # Examples
 #
