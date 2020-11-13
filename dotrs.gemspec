@@ -2,7 +2,7 @@
 
 require_relative 'lib/version'
 
-Gem::sification.new do |s|
+Gem::Specification.new do |s|
   s.name        = 'dotrs'
   s.version     = Dotrs::VERSION
   s.summary     = 'Straighforward dotfiles management'

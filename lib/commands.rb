@@ -10,13 +10,4 @@ require_relative 'cmd/push'
 require_relative 'cmd/remove'
 
 # Internal: Provide an interface to each of the commands classes.
-module Commands
-  Add = ::Add
-  Apply = ::Apply
-  Diff = ::Diff
-  Init = ::Init
-  List = ::List
-  Pull = ::Pull
-  Push = ::Push
-  Remove = ::Remove
-end
+module Commands; end
