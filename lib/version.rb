@@ -2,5 +2,5 @@
 
 # The version of dotrs
 module Dotrs
-  VERSION = '2.3.0'
+  VERSION = '2.3.1'
 end
