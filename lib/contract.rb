@@ -1,10 +1,15 @@
 # frozen_string_literal: true
 
-require_relative 'assertion_error'
-
 # Internal: Provide a way to check contracts.
 module Contract
   module_function
+
+  # Internal: Provide an error indicating the violation of an assertion.
+  class AssertionError < ArgumentError
+    def initialize(msg = '')
+      super(msg)
+    end
+  end
 
   # Internal: Raise an AssertionError if the given expression is not true.
   #

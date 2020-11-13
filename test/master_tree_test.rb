@@ -3,7 +3,7 @@
 require 'fileutils'
 require 'minitest/autorun'
 require 'minitest/reporters'
-require_relative '../lib/assertion_error'
+require_relative '../lib/contract'
 require_relative '../lib/master_tree'
 require_relative 'test_environment'
 
@@ -13,6 +13,7 @@ Minitest::Reporters.use! Minitest::Reporters::DefaultReporter.new(reporter_opt)
 # Internal: Unit tests for the MasterTree class.
 class TestMasterTree < Minitest::Test
   include TestEnvironment
+  include Contract
 
   def setup
     TestEnvironment.setup
