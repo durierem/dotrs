@@ -2,9 +2,10 @@
 
 *Straightforward dotfiles management*
 
-![GitHub](https://img.shields.io/github/license/durierem/dotrs?style=flat-square)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/durierem/dotrs?style=flat-square)
-[![Inline docs](http://inch-ci.org/github/durierem/dotrs.svg?branch=master&style=flat-square)](http://inch-ci.org/github/durierem/dotrs)
+![GitHub](https://img.shields.io/github/license/durierem/dotrs)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/durierem/dotrs)
+[![Ruby Style Guide](https://img.shields.io/badge/code_style-rubocop-brightgreen.svg)](https://github.com/rubocop-hq/rubocop)
+[![Inline docs](http://inch-ci.org/github/durierem/dotrs.svg?branch=master)](http://inch-ci.org/github/durierem/dotrs)
 
 ## What does dotrs do?
 
