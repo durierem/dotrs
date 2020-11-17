@@ -41,7 +41,7 @@ module Commands
     # Internal: Compute the commit message based on changed files.
     #
     # If the repository is empty, the returned String is "dotrs: first commit".
-    # Otherwise, the return String is of the following form:
+    # Otherwise, the returned String is of the following form:
     #   # dotrs: push from HOSTNAME
     #   #
     #   # Added:
@@ -66,6 +66,17 @@ module Commands
       msg
     end
 
+    # Internal: Compute a message indicating files changes.
+    #
+    # Depending on the Symbol status_method given as argument, the result will
+    # be a String containing the adjective describing the type of change (added,
+    # changed or deleted) and a list of the files corresponding to that change.
+    #
+    # status_method - The Symbol representation of the method to execute on a
+    #                 Git::Status object. This symbol must be either :added,
+    #                 :changed or :deleted.
+    #
+    # Returns a String representation of the changed files.
     def compute_message(status_method)
       return '' if Git.open(Config.repo_path).status.send(status_method).empty?
 

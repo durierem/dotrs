@@ -12,11 +12,11 @@ require_relative 'contract'
 # If a file's original path is "/foo/bar/file" the new path of the same file,
 # after being added to a MasterTree is "mastertree_root_directory/foo/bar/file".
 #
-# By default, the depth of path's reproduction is the root '/' directory; which
-# means that the full path to the file is recreated in the MasterTree. The depth
-# of path's reproduction can be specified as an optional argument when creating
-# a MasterTree. The path of an added file will be recreated only until the given
-# directory is reached.
+# By default, the reproduction depth is the root '/' directory; which means that
+# the full path to the file is recreated in the MasterTree. The reproduction
+# depth can be specified as an optional argument when creating a new MasterTree.
+# The path of an added file will be recreated only until the given directory is
+# reached.
 #
 # The terms "real path" and "virtual path" will be used to describe,
 # respectively, the original path of a file, and its new path once added in a
@@ -37,7 +37,11 @@ require_relative 'contract'
 #   #                                  |-bar/
 #   #                                    |-file
 class MasterTree
-  attr_reader :path, :max_depth
+  # Internal: Get the String path of the MasterTree.
+  attr_reader :path
+
+  # Internal: Get the String path to the directory of max repdroduction depth.
+  attr_reader :max_depth
 
   # Internal: Initialize a new MasterTree at the given directory.
   #
@@ -46,9 +50,9 @@ class MasterTree
   #
   # dir_name - The String root directory name for the new MasterTree. This
   #            parameter must not be null.
-  # max_depth - (optional) the String directory name for the maximum depth each
-  #             file's path will be reproduced. The directory must already
-  #             exist. This parameter must not be null.
+  # max_depth - The String directory path for the reproduction depth
+  #             (default: '/'). The directory must already exist. This parameter
+  #             must not be null.
   def initialize(dir_name, max_depth = '/')
     Contract.check(!dir_name.nil?, "invalid directory: #{dir_name}")
     Contract.check(!max_depth.nil? && Dir.exist?(max_depth),

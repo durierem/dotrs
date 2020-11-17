@@ -6,15 +6,18 @@ module Contract
 
   # Internal: Provide an error indicating the violation of an assertion.
   class AssertionError < ArgumentError
-    def initialize(msg = '')
-      super(msg)
+    # Internal: Initialize a new AssertionError.
+    #
+    # message - The String message associated with the error (default: '').
+    def initialize(message = '')
+      super(message)
     end
   end
 
   # Internal: Raise an AssertionError if the given expression is not true.
   #
   # expression - The expression to evaluate.
-  # (optional) message - The error message associated.
+  # message - The String message attached to the AssertionError (default: '').
   #
   # Returns nothing.
   def check(expression, message = '')

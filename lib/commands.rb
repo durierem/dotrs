@@ -8,6 +8,3 @@ require_relative 'cmd/list'
 require_relative 'cmd/pull'
 require_relative 'cmd/push'
 require_relative 'cmd/remove'
-
-# Internal: Provide an interface to each of the commands classes.
-module Commands; end
