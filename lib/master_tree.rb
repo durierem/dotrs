@@ -37,7 +37,11 @@ require_relative 'contract'
 #   #                                  |-bar/
 #   #                                    |-file
 class MasterTree
-  attr_reader :path, :max_depth
+  # Internal: Get the String path of the MasterTree.
+  attr_reader :path
+
+  # Internal: Get the String path to the directory of max repdroduction depth.
+  attr_reader :max_depth
 
   # Internal: Initialize a new MasterTree at the given directory.
   #
