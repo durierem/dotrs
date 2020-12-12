@@ -60,7 +60,7 @@ $ dotrs pull            // Pull last changes from the remote repository
 $ dotrs apply           // Link all tracked files to their location
 ```
 
-# Commit messages
+### Commit messages
 
 Dotrs adds pretty commit messages to help you find out what changed and when.
 
