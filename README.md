@@ -7,7 +7,7 @@
 
 *Straightforward dotfiles management*
 
-## What does dotrs do?
+## What does Dotrs do?
 
 Dotrs uses a hidden git repository, placed in your `$HOME` directory to store
 the dotfiles you want to keep synchronized. Then it creates links to them in
@@ -58,4 +58,27 @@ Retrieve new changes:
 ```
 $ dotrs pull            // Pull last changes from the remote repository
 $ dotrs apply           // Link all tracked files to their location
+```
+
+# Commit messages
+
+Dotrs adds pretty commit messages to help you find out what changed and when.
+
+Sample, taken from my own dotfiles repository:
+
+```
+dotrs: push from 'aegolius'
+
+Added:
+	.config/kitty/gruvbox-dark-base.conf
+	.config/kitty/gruvbox-dark-soft.conf
+
+Changed:
+	.config/fish/config.fish
+	.config/kitty/gruvbox-dark-medium.conf
+	.config/kitty/kitty.conf
+	.config/nvim/init.vim
+
+Deleted:
+	.vimrc
 ```
