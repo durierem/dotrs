@@ -15,12 +15,13 @@ your file system at the right location.
 
 ## Installation
 
-Dotrs is installed as a Ruby gem. To install dotrs, use the following commands:
+Dotrs is installed as a Ruby gem. To install dotrs, use the following commands
+(replace x.y.z with the current version):
 
 ```
 $ git clone https://github.com/Sevodric/dotrs && cd dotrs
 $ gem build dotrs.gemspec
-$ gem install dotrs
+$ gem install dotrs-x.y.z.gem
 ```
 
 ## Setup
