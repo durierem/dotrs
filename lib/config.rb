@@ -15,7 +15,11 @@ module Config
   class << self
     # Internal: The String path to the configuration file.
     CONFIG_PATH = File.join(Dir.home, '.config', 'dotrs', 'config.toml')
-    private_constant :CONFIG_PATH
+
+    # Internal: The default local repository name.
+    DEFAULT_REPO_NAME = ".dotfiles"
+
+    private_constant :CONFIG_PATH, :DEFAULT_REPO_NAME
 
     # Internal: Get the String path to the local repository.
     attr_reader :repo_path
@@ -30,6 +34,12 @@ module Config
     #
     # Returns nothing.
     def load_config_file
+      unless File.exist?(CONFIG_PATH)
+        FileUtils.mkdir_p(File.dirname(CONFIG_PATH))
+        FileUtils.touch(CONFIG_PATH)
+        change_repo_name(DEFAULT_REPO_NAME);
+      end
+
       config_hash = TomlRB.load_file(CONFIG_PATH, symbolize_keys: true)
 
       @repo_path = File.join(Dir.home, config_hash[:repository][:name])
@@ -40,8 +50,7 @@ module Config
     #
     # Returns nothing.
     def change_repo_name(repo_name)
-      config_hash = TomlRB.load_file(CONFIG_PATH, symbolize_keys: true)
-      config_hash[:repository][:name] = repo_name
+      config_hash = { repository: { name: repo_name } }
       File.open(CONFIG_PATH, 'w') { |f| f.write(TomlRB.dump(config_hash)) }
     end
   end

@@ -51,15 +51,14 @@ rescue OptionParser::AmbiguousOption, OptionParser::InvalidOption => e
   abort("dotrs: #{e}")
 end
 
-# Load the configuration file and set the options
-Config.load_config_file
-Config.options = options
-
 # Check if a command has been given
 abort('dotrs: no command given') if ARGV.empty?
 
 # Get the command given by the user
 command = ARGV[0].to_sym
+
+# Load the config file (or create it if it doesn't exist)
+Config.load_config_file
 
 # Handle the init command
 if command == :init
@@ -67,6 +66,9 @@ if command == :init
   Commands::Init.new(ARGV[1]).perform
   exit(true)
 end
+
+# Set the options according to the configuration file
+Config.options = options
 
 # Exit if REPO_PATH doesn't exist
 abort('dotrs: not initialized') unless Dir.exist?(Config.repo_path)
