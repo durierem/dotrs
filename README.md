@@ -71,15 +71,15 @@ Sample, taken from my own dotfiles repository:
 dotrs: push from 'aegolius'
 
 Added:
-	.config/kitty/gruvbox-dark-base.conf
-	.config/kitty/gruvbox-dark-soft.conf
+    .config/kitty/gruvbox-dark-base.conf
+    .config/kitty/gruvbox-dark-soft.conf
 
 Changed:
-	.config/fish/config.fish
-	.config/kitty/gruvbox-dark-medium.conf
-	.config/kitty/kitty.conf
-	.config/nvim/init.vim
+    .config/fish/config.fish
+    .config/kitty/gruvbox-dark-medium.conf
+    .config/kitty/kitty.conf
+    .config/nvim/init.vim
 
 Deleted:
-	.vimrc
+    .vimrc
 ```

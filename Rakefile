@@ -1,19 +1,12 @@
 # frozen_string_literal: true
 
-desc 'Run all tasks'
-task :all do
-  Rake::Task['rubocop'].execute
-  Rake::Task['test'].execute
-end
+require 'bundler/gem_tasks'
+require 'rspec/core/rake_task'
 
-desc 'Run rubocop'
-task :rubocop do
-  sh 'rubocop'
-end
+RSpec::Core::RakeTask.new(:spec)
 
-desc 'Run unit tests'
-task :test do
-  ruby 'test/master_tree_test.rb'
-end
+require 'rubocop/rake_task'
 
-task default: :all
+RuboCop::RakeTask.new
+
+task default: %i[spec rubocop]
