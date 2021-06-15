@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   ].flatten
   s.executables << 'dotrs'
 
-  s.required_ruby_version = '~> 2.7'
+  s.required_ruby_version = '>= 2.7'
 
   s.add_runtime_dependency 'git', '~> 1.7'
   s.add_runtime_dependency 'toml-rb', '~> 2.0'
