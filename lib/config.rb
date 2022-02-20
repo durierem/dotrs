@@ -17,7 +17,7 @@ module Config
     CONFIG_PATH = File.join(Dir.home, '.config', 'dotrs', 'config.toml')
 
     # Internal: The default local repository name.
-    DEFAULT_REPO_NAME = ".dotfiles"
+    DEFAULT_REPO_NAME = '.dotfiles'
 
     private_constant :CONFIG_PATH, :DEFAULT_REPO_NAME
 
@@ -37,7 +37,7 @@ module Config
       unless File.exist?(CONFIG_PATH)
         FileUtils.mkdir_p(File.dirname(CONFIG_PATH))
         FileUtils.touch(CONFIG_PATH)
-        change_repo_name(DEFAULT_REPO_NAME);
+        change_repo_name(DEFAULT_REPO_NAME)
       end
 
       config_hash = TomlRB.load_file(CONFIG_PATH, symbolize_keys: true)
@@ -51,7 +51,7 @@ module Config
     # Returns nothing.
     def change_repo_name(repo_name)
       config_hash = { repository: { name: repo_name } }
-      File.open(CONFIG_PATH, 'w') { |f| f.write(TomlRB.dump(config_hash)) }
+      File.write(CONFIG_PATH, TomlRB.dump(config_hash))
     end
   end
 end

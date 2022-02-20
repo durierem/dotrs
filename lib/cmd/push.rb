@@ -59,7 +59,7 @@ module Commands
     def compute_commit_message
       return 'dotrs: first commit' if empty_repo?(Config.repo_path)
 
-      msg = String.new("dotrs: push from '#{Socket.gethostname}'\n")
+      msg = +"dotrs: push from '#{Socket.gethostname}'\n"
       msg << compute_message(:added)
       msg << compute_message(:changed)
       msg << compute_message(:deleted)
