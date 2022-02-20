@@ -20,7 +20,7 @@ module Commands
       @files.each do |file|
         @mt.add(file)
         puts("#{file} added to tracked files") if Config.options[:verbose]
-      rescue AssertionError => e
+      rescue Contract::AssertionError => e
         abort("dotrs: #{e}")
       end
     end

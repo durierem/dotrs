@@ -23,7 +23,7 @@ module Commands
       @files.each do |file|
         @mt.remove(file)
         puts("#{file} removed from tracked files") if Config.options[:verbose]
-      rescue AssertionError => e
+      rescue Contract::AssertionError => e
         abort("dotrs: #{e}")
       end
     end
