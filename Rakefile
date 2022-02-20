@@ -1,19 +1,15 @@
 # frozen_string_literal: true
 
-desc 'Run all tasks'
-task :all do
-  Rake::Task['rubocop'].execute
-  Rake::Task['test'].execute
+require 'bundler/gem_tasks'
+require 'rake/testtask'
+require 'rubocop/rake_task'
+
+RuboCop::RakeTask.new
+
+Rake::TestTask.new(:test) do |t|
+  t.libs << 'test'
+  t.libs << 'lib'
+  t.test_files = FileList['test/**/test_*.rb']
 end
 
-desc 'Run rubocop'
-task :rubocop do
-  sh 'rubocop'
-end
-
-desc 'Run unit tests'
-task :test do
-  ruby 'test/master_tree_test.rb'
-end
-
-task default: :all
+task default: %i[rubocop test]

@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.author      = 'Rémi Durieu'
   s.homepage    = 'https://github.com/durierem/dotrs'
   s.license     = 'MIT'
-  s.email       = 'remi.durieu@univ-rouen.fr'
+  s.email       = 'mail@remidurieu.dev'
   s.files       = [
     'bin/dotrs',
     Dir.glob('lib/**/*'),
@@ -24,7 +24,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'git', '~> 1.7'
   s.add_runtime_dependency 'toml-rb', '~> 2.0'
   s.add_runtime_dependency 'tty-tree', '~> 0.4'
-
-  s.add_development_dependency 'minitest', '~> 5.0'
-  s.add_development_dependency 'rubocop', '~> 0.92'
+  s.metadata['rubygems_mfa_required'] = 'true'
 end

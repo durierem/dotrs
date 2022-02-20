@@ -1,10 +1,47 @@
+# See list of defaults here: https://docs.rubocop.org/rubocop/index.html
+
+require:
+  - rubocop-performance
+  - rubocop-minitest
+  - rubocop-rake
+
 AllCops:
   TargetRubyVersion: 2.7
+  NewCops: enable
   Exclude:
-    - test/*.rb
+    - bin/**/*
+    - test/**/*
+
+# ------------------------------------------------------------------------------
+# DEPARTMENT LAYOUT
+# ------------------------------------------------------------------------------
+
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent # default: special_inside_parentheses
+
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: consistent # default: special_inside_parentheses
+
+Layout/LineLength:
+  Max: 80 # default: 120
+
+# ------------------------------------------------------------------------------
+# DEPARTMENT METRICS
+# ------------------------------------------------------------------------------
 
 Metrics/AbcSize:
   Max: 20
 
 Metrics/BlockLength:
-  ExcludedMethods: ['OptionParser.new']
+  IgnoredMethods: [
+    'OptionParser.new'
+  ]
+  Exclude:
+    - spec/**/*
+
+# ------------------------------------------------------------------------------
+# DEPARTMENT STYLE
+# ------------------------------------------------------------------------------
+
+Style/Documentation:
+  Enabled: false # default: true
