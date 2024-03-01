@@ -11,7 +11,7 @@ group :development do
   gem 'rubocop-minitest', '~> 0.17.2', require: false
   gem 'rubocop-performance', '~> 1.13', require: false
   gem 'rubocop-rake', '~> 0.6.0', require: false
-  gem 'yard', '~> 0.9.27', require: false
+  gem 'yard', '~> 0.9.36', require: false
 end
 
 group :test do
