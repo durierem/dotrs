@@ -64,9 +64,7 @@ GEM
       citrus (~> 3.0, > 3.0)
     tty-tree (0.4.0)
     unicode-display_width (2.1.0)
-    webrick (1.7.0)
-    yard (0.9.27)
-      webrick (~> 1.7.0)
+    yard (0.9.36)
 
 PLATFORMS
   x86_64-linux
@@ -81,7 +79,7 @@ DEPENDENCIES
   rubocop-performance (~> 1.13)
   rubocop-rake (~> 0.6.0)
   simplecov
-  yard (~> 0.9.27)
+  yard (~> 0.9.36)
 
 BUNDLED WITH
    2.3.7
